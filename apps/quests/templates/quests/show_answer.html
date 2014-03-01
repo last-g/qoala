@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+{% endblock %}
+
+{% block content %}
+    {% if answer.is_checked %}
+        {% if answer.is_success %}
+            {% blocktrans %}
+                Gratz! You've hacked!
+            {% endblocktrans %}
+        {% else %}
+            {% blocktrans %}
+                NOWAY!
+            {% endblocktrans %}
+        {% endif %}
+    {% else %}
+        {% blocktrans %}
+            Sorry, but your answer is not checked yet
+        {% endblocktrans %}
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}
+{% endblock %}
+
+{% block content %}
+    <div>
+        {{ variant.quest.name }}
+    </div>
+    <div>
+        {{ variant.html | safe }}
+    </div>
+    <div>
+        <form action="{% url 'quests.views.answer_task' variant.quest.id %}" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="Answer" />
+        </form>
+    </div>
+{% endblock %}

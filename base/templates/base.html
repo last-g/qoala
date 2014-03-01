@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>
+        RuCTF Quals 2014 -
+        {% block title %}
+            Main
+        {% endblock %}
+    </title>
+    {% block scripts %}{% endblock %}
+    {% block css %}{% endblock %}
+</head>
+<body>
+
+{% block menu %}
+    <nav>
+        <menu>
+            <li><a href="{% url 'board.views.score_board' %}">Score board</a></li>
+            <li><a href="{% url 'board.views.task_board' %}">Tasks</a></li>
+        </menu>
+    </nav>
+{% endblock %}
+
+<div class="accounting">
+    {% if user.is_authenticated %}
+        <a href="{{ user.get_absolute_url }}">{{ user.get_short_name }}</span>
+        <a href="{% url 'logout' %}">Logout</a>
+    {% else %}
+        <a href="{% url 'login' %}">Enter</a>
+    {% endif %}
+</div>
+{% block content %}
+{% endblock %}
+
+{% block footer %}
+{% endblock %}
+</body>
+</html>

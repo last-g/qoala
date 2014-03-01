@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    {% for team in teams %}
+        <div>
+            <span class="team-name">{{ team.name }}</span> <span class="team-score">{{ team.score|default_if_none:'0'}}</span>
+        </div>
+    {% endfor %}
+
+    {% comment %}
+    {% for team in teams %}
+        <div>
+            <span>
+                {{ team.name }}
+            </span>
+            <span>
+                {{ team.score }}
+            </span>
+        </div>
+    {% endfor %}
+
+    {% endcomment %}
+
+{% endblock %}
