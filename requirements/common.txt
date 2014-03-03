@@ -34,3 +34,6 @@ South
 
 # Feature testing
 #django-waffle
+
+# 2to3
+six

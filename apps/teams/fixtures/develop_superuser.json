@@ -1,0 +1,1 @@
+[{"pk": 1, "model": "teams.team", "fields": {"name": "hackerdom", "is_active": true, "is_superuser": true, "token": null, "is_staff": true, "last_login": "2014-03-03T18:50:15.792Z", "groups": [], "user_permissions": [], "password": "pbkdf2_sha256$12000$kp8m7WBHzfaK$Ti4TTFnWxnRhIQIDm7RM6JsZK4C1yGNMItl2z0g5bB4="}}]
