@@ -10,14 +10,12 @@ __author__ = 'Last G'
 
 board_sql = """
 
-select quest.*, category.name as category_name , sum(opens.id) as is_open ,sum(answer.id) as is_solved
+select quest.*, category.name as category_name , sum(opens.team_id) as is_open ,sum(answer.id) as is_solved
 from quests_quest quest
  join quests_category category on quest.category_id = category.id
- left join quests_quest_open_for opens on opens.quest_id = quest.id
+ left join quests_quest_open_for opens on opens.quest_id = quest.id and opens.team_id = %s
  left join quests_questvariant variant   on variant.quest_id = quest.id
  left join quests_questanswer  answer    on answer.quest_variant_id = variant.id and answer.is_checked and answer.is_success
-where
-  opens.team_id = %s
 group by quest.id
 order by category.name, quest.score
 """
