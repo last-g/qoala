@@ -9,7 +9,7 @@ from teams.models import Team
 
 def task_board(request):
     tasks_by_category = get_task_board(request.user)
-    return render(request, 'board/taskboard.html', {'categories': tasks_by_category})
+    return render(request, 'board/taskboard.html', {'by_categories': tasks_by_category})
 
 
 @condition(last_modified_func=scoreboard_modified)
