@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 {% load staticfiles %}
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -8,8 +10,8 @@
     <meta name="description" content="RuCTF,Quals,CTF,Security,Challenge">
     <meta name="author" content="Hackerdom team">
 
-    <title>RuCTF Quals 2014 &ndash; {% block title %}Main{% endblock %}
-    </title>
+    <title>RuCTF Quals 2014 &ndash; {% block title %}Main{% endblock %}</title>
+
     <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet">
     <link href="{% static "css/style.css" %}" rel="stylesheet">
   </head>
@@ -27,14 +29,12 @@
           </button>
           <a class="navbar-brand" href="/">RuCTF 2014 Quals</a>
         </div>
-        <div class="navbar-collapse collapse">
           {% if user.is_authenticated %}
             <div class="navbar-collapse collapse">
               <ul class="nav navbar-nav navbar-right">
                 <li><a href="{% url "board.views.task_board" %}">Tasks</a></li>
                 <li><a href="{% url "board.views.score_board" %}">Scoreboard</a></li>
                 <li><a href="{{ user.get_absolute_url }}">Profile</a></li>
-<!--                <li><a href="#">Help</a></li>-->
               </ul>
               <form class="navbar-form navbar-right">
                 <button type="submit" class="btn btn-success" href="{% url 'logout' %}">Logout</button>
@@ -48,9 +48,8 @@
               </div>
               <button type="submit" class="btn btn-success">Sign in</button>
             </form>
-<!--            <a href="{% url 'login' %}">Enter</a>-->
           {% endif %}
-        </div>
+
       </div>
     </div>
 
@@ -69,8 +68,23 @@
     <div class="container">
 
       <div class="page-header">
+          <div class="btn-group btn-group-sm i18n">
+            {% if LANGUAGE_CODE == "ru" %}
+              <a href="{% url 'set_lang' 'ru' %}" role="button" class="btn btn-info" disabled="disabled">RU</a>
+            {% else %}
+              <a href="{% url 'set_lang' 'ru' %}" role="button" class="btn btn-default">RU</a>
+            {% endif %}
+            {% if LANGUAGE_CODE == "en" %}
+              <a href="{% url 'set_lang' 'en' %}" role="button" class="btn btn-info" disabled="disabled">EN</a>
+            {% else %}
+              <a href="{% url 'set_lang' 'en' %}" role="button" class="btn btn-default">EN</a>
+            {% endif %}
+          </div>
+
         <h1>{% block page_header %}{% endblock %}</h1>
       </div>
+
+
 
       {% comment %}
       <div class="well">
@@ -88,8 +102,7 @@
       </footer>
     </div>
 
-
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-    <script src="../static/css/js/bootstrap.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
   </body>
 </html>
