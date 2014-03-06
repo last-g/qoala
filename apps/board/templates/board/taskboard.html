@@ -4,18 +4,20 @@
 
 {% block content %}
 
-    <div class="row">
+    <div class="tasks row">
       {% for category in categories %}
         <div class="col-md-2">
           <h2>{{ category.name }}</h2>
           {% for task in category.quest_set.all %}
+          <div class="task">
             {% if task.is_solved %}
-              <span class="solved">{{ task.score }}</span>
+              <p><a class="btn btn-success" disabled="disabled">{{ task.score }}. {{ task.name }}</a></p>
             {% elif task.is_open %}
-              <p><a class="btn btn-default" href="{{ task.get_absolute_url }}" role="button">{{ task.score }}</a></p>
+              <p><a class="btn btn-default" href="{{ task.get_absolute_url }}" role="button">{{ task.score }}. {{ task.name }}</a></p>
             {% else %}
-              <p><a class="btn btn-default" disabled="disabled">{{ task.score }}</a></p>
+              <p><a class="btn btn-default" disabled="disabled">{{ task.score }}. {{ task.name }}</a></p>
             {% endif %}
+          </div>
           {% endfor %}
         </div>
       {% endfor %}
