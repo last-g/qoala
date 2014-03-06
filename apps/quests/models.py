@@ -102,7 +102,7 @@ class Quest(qtils.CreateAndUpdateDateMixin, qtils.ModelDiffMixin, models.Model):
     @property
     def get_hashkey(self):
         salt = settings.TASK_SALT
-        key = salt + str(self.id) + salt
+        key = salt + str(self.shortname)
         hasher = hashlib.md5()
         hasher.update(key)
         return hasher.hexdigest()
