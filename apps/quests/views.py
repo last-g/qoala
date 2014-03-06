@@ -19,7 +19,7 @@ def open_task(req, task):
 
 def open_task_by_id(req, task_id):
     task = get_object_or_404(models.Quest, pk=task_id)
-    open_task(req, task)
+    return open_task(req, task)
 
 
 def open_task_by_name(req, task_name):
