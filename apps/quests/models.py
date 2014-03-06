@@ -119,8 +119,7 @@ class Quest(qtils.CreateAndUpdateDateMixin, qtils.ModelDiffMixin, models.Model):
 
     def get_absolute_url(self):
         from django.core.urlresolvers import reverse
-
-        return reverse('quests.views.open_task', args=[str(self.id)])
+        return reverse('quests.views.open_task_by_name', args=[str(self.shortname)])
 
     def is_solved_by(self, team):
         return self.questvariant_set.filter(questanswer__is_success=True, questanswer__is_checked=True).exists()

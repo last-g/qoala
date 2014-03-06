@@ -11,7 +11,7 @@
         {{ variant.html | safe }}
     </div>
     <div>
-        <form action="{% url 'quests.views.answer_task' variant.quest.id %}" method="post">
+        <form action="{% url 'quests.views.answer_task_by_name' variant.quest.shortname %}" method="post">
             {% csrf_token %}
             {{ form.as_p }}
             <input type="submit" value="Answer" />
