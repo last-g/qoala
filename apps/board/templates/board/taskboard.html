@@ -1,26 +1,24 @@
 {% extends "base.html" %}
 
-{% block page_header %}Tasks{% endblock %}
+{% block page_header %}TASKS{% endblock %}
 
 {% block content %}
 
-    {% for category in categories %}
-        <div class="category-column">
-            <div class="category-name"> {{ category.name }} </div>
-            <div class="category-tasks">
-                {% for task in category.quest_set.all %}
-                    <div class="task">
-                        {% if task.is_solved %}
-                            <span class="solved">{{ task.score }}</span>
-                        {% elif task.is_open %}
-                            <a class="open" href="{{ task.get_absolute_url }}">{{ task.score }}</a>
-                        {% else %}
-                            <span class="closed">{{ task.score }}</span>
-                        {% endif %}
-                    </div>
-                {% endfor %}
-            </div>
+    <div class="row">
+      {% for category in categories %}
+        <div class="col-md-2">
+          <h2>{{ category.name }}</h2>
+          {% for task in category.quest_set.all %}
+            {% if task.is_solved %}
+              <span class="solved">{{ task.score }}</span>
+            {% elif task.is_open %}
+              <p><a class="btn btn-default" href="{{ task.get_absolute_url }}" role="button">{{ task.score }}</a></p>
+            {% else %}
+              <p><a class="btn btn-default" disabled="disabled">{{ task.score }}</a></p>
+            {% endif %}
+          {% endfor %}
         </div>
-    {% endfor %}
+      {% endfor %}
+    </div>
 
 {% endblock %}
