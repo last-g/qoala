@@ -44,14 +44,11 @@ def groupby(collection, key):
 
 def get_task_board(team):
     quests = list(Quest.objects.raw(board_sql, [team.id]))
-    print(quests)
-    print(len(quests))
 #    by_category = itertools.groupby(quests, attrgetter('category_name'))
 #    by_category = defaultdict(list)
 #    for q in quests:
 #        by_category[q.category.name].append(q)
     by_category = groupby(quests, 'category_name')
-    print(by_category)
     return by_category
 
 
