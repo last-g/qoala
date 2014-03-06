@@ -6,3 +6,9 @@ body {
 .tasks .task * {
   font-size: 10pt !important;
 }
+
+.i18n 
+{
+  position: absolute;
+  right: 50px;
+}
