@@ -1,20 +1,21 @@
 {% extends "base.html" %}
 
-{% block title %}
-{% endblock %}
+{% block title %}{{ variant.quest.name }}{% endblock %}
+
+{% block page_header %}<a href="{% url "board.views.task_board" %}">&larr;</a> {{ variant.quest.name }}{% endblock %}
 
 {% block content %}
-    <div>
-        {{ variant.quest.name }}
-    </div>
-    <div>
+    <div class="well">
         {{ variant.html | safe }}
     </div>
     <div>
-        <form action="{% url 'quests.views.answer_task_by_id' variant.quest.id %}" method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <input type="submit" value="Answer" />
-        </form>
+      <form class="form-inline" role="form" action="{% url 'quests.views.answer_task_by_id' variant.quest.id %}" method="post">
+       {% csrf_token %}
+        <div class="form-group">
+          <label class="sr-only" for="task-answer">Email address</label>
+          <input type="text" class="form-control" id="task-answer" placeholder="Enter flag" name="answer">
+        </div>
+        <button type="submit" class="btn btn-default">Send</button>
+      </form>
     </div>
 {% endblock %}
