@@ -26,7 +26,7 @@ def category_number():
 
 class Category(qtils.CreateAndUpdateDateMixin, models.Model):
     name = models.CharField(max_length=60)
-    order = models.IntegerField(default=category_number)
+    number = models.IntegerField(default=category_number)
 
 
 @python_2_unicode_compatible
