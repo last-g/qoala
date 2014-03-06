@@ -253,7 +253,7 @@ def update_default(sender, instance, **kwargs):
 @receiver(pre_save, sender=Quest)
 def load_initial(sender, instance, **kwargs):
     quest = instance
-    if quest.pk is None:
+    if quest.pk is None or quest.get_field_diff('provider_file'):
         quest.update_from_file(quest.provider_type, quest.provider_file)
 
 
