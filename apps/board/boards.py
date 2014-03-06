@@ -27,7 +27,7 @@ def groupby(collection, key):
     it = iter(collection)
     first = next(it)
     prev = getattr(first, key)
-    subres.append(prev)
+    subres.append(first)
     for el in it:
         current = getattr(el, key)
         if current == prev:
