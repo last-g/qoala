@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import authenticate, login, logout
 from .forms import TokenAuthForm
@@ -34,3 +35,14 @@ def do_login(request):
 def do_logout(request):
     logout(request)
     return redirect("home")
+
+
+def set_lang(request, lang_code):
+    from django.utils import translation
+
+    translation.activate(lang_code)
+ #   request.session[translation.LANGUAGE_SESSION_KEY] = lang_code
+    response = redirect(request.META['HTTP_REFERER'])
+    response.set_cookie(settings.LANGUAGE_COOKIE_NAME, lang_code)
+    return response
+#    return

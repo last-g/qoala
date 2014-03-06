@@ -92,8 +92,14 @@ WSGI_APPLICATION = 'qoala.wsgi.application'
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+#LANGUAGE_CODE = 'en-us'
 
+LANGUAGE_CODE = 'ru'
+
+LANGUAGES = (
+    ('ru', 'Russian'),
+    ('en', 'English'),
+)
 
 
 # If you set this to False, Django will make some optimizations so as not
@@ -124,6 +130,7 @@ STATIC_URL = '/static/'
 #
 # By default, be at least somewhat secure with our session cookies.
 SESSION_COOKIE_HTTPONLY = True
+
 
 def custom_show_toolbar(request):
     """ Only show the debug toolbar to users with the superuser flag. """
