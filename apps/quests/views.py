@@ -55,7 +55,7 @@ def answer_task_by_name(request, task_name):
 
 def get_static(request, task, path):
     static = django.conf.settings.STATIC_URL.rstrip('/')
-    new_path = '/'.join([static, 'taskstatic', task.shortname, task.get_hashkey, path])
+    new_path = '/'.join([static, 'taskstatic', str(task.id), task.get_hashkey, path])
     return redirect(new_path)
 
 
