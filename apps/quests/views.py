@@ -52,18 +52,22 @@ def answer_task_by_name(request, task_name):
     task = get_object_or_404(models.Quest, shortname=task_name)
     return answer_task(request, task)
 
+
 def get_static(request, task, path):
     static = django.conf.settings.STATIC_URL.rstrip('/')
-    new_path = '/'.join(static, 'taskstatic', task.shortname, task.get_hashkey, path)
+    new_path = '/'.join([static, 'taskstatic', task.shortname, task.get_hashkey, path])
     return redirect(new_path)
+
+
+def get_task_static_by_id(request, task_id, path):
+    task = get_object_or_404(models.Quest, pk=task_id)
+    return get_static(request, task, path)
+
 
 def get_task_static_by_name(request, task_name, path):
     task = get_object_or_404(models.Quest, shortname=task_name)
     return get_static(request, task, path)
 
-def get_task_static_by_id(request, task_id, path):
-    task = get_object_or_404(models.Quest, pk=task_id)
-    return get_static(request, task, path)
 
 def check_answer(request, answer_id):
     answer = get_object_or_404(models.QuestAnswer, pk=answer_id, quest_variant__team=request.user)
