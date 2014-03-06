@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 
-{% block content %}
+{% block title %}Team {{ team.name }}{% endblock %}
 
-    <h1>Hello, Kitty!</h1>
+{% block page_header %}Hello, Kitty!{% endblock %}
+
+{% block content %}
 
     <span>
         {{ team.name }} $$ {{ team.password }}
