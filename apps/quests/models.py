@@ -12,23 +12,25 @@ from django.utils.html import escape
 from zope.cachedescriptors import property as zp
 from django.utils.translation import ugettext as _
 import qtils.models as qtils
+import hashlib
 from . import tasks
 
 from qserver.quest import *
 
 # Create your models here.
-
-UPDATEABLE_FIELDS = ['name', 'shortname', 'score', 'category']
+from teams.models import Team
 
 def category_number():
     return Category.objects.aggregate(num=Max('order'))['num'] or 1
+
 
 class Category(qtils.CreateAndUpdateDateMixin, models.Model):
     name = models.CharField(max_length=60)
     order = models.IntegerField(default=category_number)
 
+
 @python_2_unicode_compatible
-class Quest(qtils.CreateAndUpdateDateMixin, models.Model):
+class Quest(qtils.CreateAndUpdateDateMixin, qtils.ModelDiffMixin, models.Model):
     """
     Quest model
     """
@@ -47,20 +49,28 @@ class Quest(qtils.CreateAndUpdateDateMixin, models.Model):
 
     @property
     def name(self):
-        self.provider.name
+        return self.provider.name
 
     def _get_score(self):
         return int(self.provider.id.split(':')[1])
 
-    def __update_from_file(self, provider_type, provider_path, fields=UPDATEABLE_FIELDS):
-        if 'provider' in fields:
-            pass
+    @staticmethod
+    def get_hash(file_path):
+        block = 2 ** 20  # 1 Mb
+        md5 = hashlib.md5()
+        with open(file_path, 'rb') as f:
+            for chunk in iter(lambda: f.read(block), b''):
+                md5.update(chunk)
+        return md5.hexdigest()
 
     def update_from_file(self, provider_type, provider_path):
-        provider = self.get_provider(provider_type, provider_path)
-        (category, _) = Category.objects.get_or_create(name=provider.series)
-        self.category = category
-        self.score = self._get_score()
+        hashed = self.get_hash(provider_path)
+        if hashed != self.provider_hash:
+            provider = self.get_provider(provider_type, provider_path)
+            (category, _) = Category.objects.get_or_create(name=provider.series)
+            self.category = category
+            self.score = self._get_score()
+            self.provider_hash = hashed
 
     @staticmethod
     def get_provider(name, path):
@@ -75,6 +85,9 @@ class Quest(qtils.CreateAndUpdateDateMixin, models.Model):
     def provider(self):
         return self.get_provider(self.provider_type, self.provider_file)
 
+    def invalidate_variants(self):
+        self.questvariant_set.update(is_valid=False)
+
     def _create_variant(self, team_id, try_count):
         provided_quest = self.provider.CreateQuest(team_id)
         timeout = timedelta(seconds=provided_quest.timeout) if provided_quest.timeout else timedelta(days=200)
@@ -85,6 +98,15 @@ class Quest(qtils.CreateAndUpdateDateMixin, models.Model):
             try_count=try_count,
             state=pickle.dumps(provided_quest)
         )
+
+    @property
+    def get_hashkey(self):
+        salt = settings.TASK_SALT
+        key = salt + str(self.id) + salt
+        hasher = hashlib.md5()
+        hasher.update(key)
+        return hasher.hexdigest()
+
 
     def get_variant(self, team):
         team_id = team.id
@@ -112,6 +134,9 @@ class Quest(qtils.CreateAndUpdateDateMixin, models.Model):
     def __str__(self):
         return self.shortname
 
+    class Meta(object):
+        ordering = ['-score']
+
 
 class QuestVariant(qtils.CreateAndUpdateDateMixin, models.Model):
     """
@@ -127,7 +152,8 @@ class QuestVariant(qtils.CreateAndUpdateDateMixin, models.Model):
 
     @property
     def html(self):
-        return self.descriptor.raw_replace_patterns(self._get_html(), str(self.quest.id), str(self.team.id), settings.TASK_SALT)
+        return self.descriptor.raw_replace_patterns(self._get_html(), str(self.quest.id), str(self.team.id),
+                                                    settings.TASK_SALT)
 
     @zp.Lazy
     def descriptor(self):
@@ -171,7 +197,7 @@ class QuestVariant(qtils.CreateAndUpdateDateMixin, models.Model):
         return self.quest.provider.OnUserAction(self.descriptor, answer)
 
 
-class QuestAnswer(qtils.CreateAndUpdateDateMixin, models.Model):
+class QuestAnswer(qtils.CreateAndUpdateDateMixin, qtils.ModelDiffMixin, models.Model):
     """Model that describes someones try to score quest"""
     quest_variant = models.ForeignKey(QuestVariant, blank=False, null=False)
     is_checked = models.BooleanField(default=False, null=False, blank=False)
@@ -210,7 +236,8 @@ def check_answer(sender, instance, created, **kwargs):
 
 def determ_profire_type(provider_file):
     from os.path import basename, splitext
-    root, ext  = splitext(basename(provider_file))
+
+    root, ext = splitext(basename(provider_file))
     if ext.lower() == '.xml':
         return 'XMLQuestProvider'
     else:
@@ -229,3 +256,22 @@ def load_initial(sender, instance, **kwargs):
     quest = instance
     if quest.pk is None:
         quest.update_from_file(quest.provider_type, quest.provider_file)
+
+
+@receiver(post_save, sender=Quest)
+def invalidate_variants(sender, instance, **kwargs):
+    quest = instance
+    if quest.get_field_diff('provider_hash'):
+        quest.invalidate_variants()
+
+@receiver(post_save, sender=QuestAnswer)
+def open_quests(sender, instance, **kwargs):
+    answer = instance
+    if answer.is_checked and answer.is_success and (answer.get_field_diff('is_checked') or answer.get_field_diff('is_success')):
+        quest = answer.quest_variant.quest
+        category = quest.category
+        score = quest.score
+        all_teams = list(Team.objects.all())
+        nxt = Quest.objects.filter(category=category, score__gt=score).order_by('score').first()
+        if nxt:
+            nxt.open_for.add(*all_teams)
