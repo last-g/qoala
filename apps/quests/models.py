@@ -78,7 +78,6 @@ class Quest(qtils.CreateAndUpdateDateMixin, qtils.ModelDiffMixin, models.Model):
             if not provider_type.lower().count('xml'):
                 self.is_simple = False
 
-
     @staticmethod
     def get_provider(name, path):
         get_class = lambda x: globals()[x]
@@ -214,9 +213,10 @@ class QuestVariant(qtils.CreateAndUpdateDateMixin, models.Model):
 class QuestAnswer(qtils.CreateAndUpdateDateMixin, qtils.ModelDiffMixin, models.Model):
     """Model that describes someones try to score quest"""
     quest_variant = models.ForeignKey(QuestVariant, blank=False, null=False)
-    is_checked = models.BooleanField(default=False, null=False, blank=False)
 
+    is_checked = models.BooleanField(default=False, null=False, blank=False)
     is_success = models.BooleanField(default=False, null=False, blank=False)
+
     result = models.TextField(editable=True, blank=True, null=False)
     score = models.IntegerField(default=0, null=False, blank=False)
 
