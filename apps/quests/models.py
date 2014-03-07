@@ -42,6 +42,7 @@ class Quest(qtils.CreateAndUpdateDateMixin, qtils.ModelDiffMixin, models.Model):
 
     provider_type = models.CharField(max_length=60, blank=True)
     provider_file = models.FilePathField(path=settings.TASKS_DIR, recursive=True, allow_folders=False, allow_files=True)
+    provider_state = models.BinaryField(editable=False, null=True)
     provider_hash = models.CharField(max_length=60, editable=False)
 
     is_simple = models.BooleanField(_('Can be checked at main thread'), default=True, editable=True, blank=True)
@@ -73,19 +74,27 @@ class Quest(qtils.CreateAndUpdateDateMixin, qtils.ModelDiffMixin, models.Model):
             self.category = category
             self.score = self._get_score()
             self.provider_hash = hashed
+            self.provider_state = pickle.dumps(provider)
 
     @staticmethod
     def get_provider(name, path):
         get_class = lambda x: globals()[x]
         ProviderClass = get_class(name)
-        return ProviderClass(path)
+        provider = ProviderClass(path)
+        provider.dir = os.path.join(settings.TASKS_DATA_DIR, os.path.basename(path))  # XXX: Monkey patch
+        return provider
 
     def is_open_for(self, team):
         return self.open_for.filter(pk=team.id).exists()
 
-    @property
+    @zp.Lazy
     def provider(self):
-        return self.get_provider(self.provider_type, self.provider_file)
+        if self.provider_state:
+            return pickle.loads(self.provider_state)
+        else:
+            provider = self.get_provider(self.provider_type, self.provider_file)
+            self.provider_state = pickle.dumps(provider)
+            return provider
 
     def invalidate_variants(self):
         self.questvariant_set.update(is_valid=False)
