@@ -35,10 +35,10 @@ class TeamManager(BaseUserManager):
 
 
 class Team(AbstractBaseUser, PermissionsMixin):
-    name = models.CharField(max_length=60, help_text=_("team name"), blank=False, null=False, unique=True)
-    is_staff = models.BooleanField(help_text=_('staff status'), blank=False, null=False, default=False)
-    is_active = models.BooleanField(help_text=_('User can log in'), blank=False, null=False, default=True)
-    token = models.CharField(max_length=64, unique=True, blank=False, null=True)
+    name = models.CharField(max_length=60, help_text=_("team name"), blank=False, null=False, unique=True, db_index=True)
+    is_staff = models.BooleanField(help_text=_('staff status'), blank=False, null=False, default=False, db_index=True)
+    is_active = models.BooleanField(help_text=_('User can log in'), blank=False, null=False, default=True, db_index=True)
+    token = models.CharField(max_length=64, unique=True, blank=False, null=True, db_index=True)
 
     USERNAME_FIELD = 'name'
 

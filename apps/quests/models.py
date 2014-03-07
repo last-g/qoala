@@ -36,9 +36,9 @@ class Quest(qtils.CreateAndUpdateDateMixin, qtils.ModelDiffMixin, models.Model):
     """
     Quest model
     """
-    shortname = models.CharField(max_length=60, unique=True)
-    category = models.ForeignKey(Category, editable=False)
-    score = models.IntegerField(blank=False, editable=False)
+    shortname = models.CharField(max_length=60, unique=True, db_index=True)
+    category = models.ForeignKey(Category, editable=False, db_index=True)
+    score = models.IntegerField(blank=False, editable=False, db_index=True)
 
     provider_type = models.CharField(max_length=60, blank=True)
     provider_file = models.FilePathField(path=settings.TASKS_DIR, recursive=True, allow_folders=False, allow_files=True)
@@ -127,7 +127,7 @@ class Quest(qtils.CreateAndUpdateDateMixin, qtils.ModelDiffMixin, models.Model):
         if last_variant and timezone.now() < last_variant.timeout and last_variant.is_valid:
             return last_variant
 
-        next_version = last_variant.try_count+1 if last_variant else 1
+        next_version = last_variant.try_count + 1 if last_variant else 1
         return self._create_variant(team_id, next_version)
 
     def get_absolute_url(self):
@@ -157,10 +157,11 @@ class QuestVariant(qtils.CreateAndUpdateDateMixin, models.Model):
     """
     quest = models.ForeignKey(Quest, null=False, blank=False)
     team = models.ForeignKey('teams.Team', null=False, blank=False)
-    timeout = models.DateTimeField()
-    try_count = models.IntegerField(default=1, null=False, blank=False)
+    timeout = models.DateTimeField(db_index=True)
+    try_count = models.IntegerField(default=1, null=False, blank=False, db_index=True)
     is_valid = models.BooleanField(default=True, null=False,
-                                   blank=False)  # All question variants are invalidated, when new version of Question uploaded
+                                   blank=False,
+                                   db_index=True)  # All question variants are invalidated, when new version of Question uploaded
     state = models.BinaryField()
 
     @property
@@ -214,11 +215,11 @@ class QuestAnswer(qtils.CreateAndUpdateDateMixin, qtils.ModelDiffMixin, models.M
     """Model that describes someones try to score quest"""
     quest_variant = models.ForeignKey(QuestVariant, blank=False, null=False)
 
-    is_checked = models.BooleanField(default=False, null=False, blank=False)
-    is_success = models.BooleanField(default=False, null=False, blank=False)
+    is_checked = models.BooleanField(default=False, null=False, blank=False, db_index=True)
+    is_success = models.BooleanField(default=False, null=False, blank=False, db_index=True)
 
     result = models.TextField(editable=True, blank=True, null=False)
-    score = models.IntegerField(default=0, null=False, blank=False)
+    score = models.IntegerField(default=0, null=False, blank=False, db_index=True)
 
     answer = models.TextField()
     answer_file = models.FileField(upload_to="media", editable=False)
