@@ -90,10 +90,10 @@ ScriptQuestProvider
 
 Квест описывается одним скриптом. Для получения информации о квесте ScriptQuestProvider вызывает скрипт с разными параметрами.
 
-* ``<scriptname> id`` - печатает идентификатор теста на stdout, в формате series:score (например, ``random:400``)
+* ``<scriptname> id`` - печатает идентификатор квеста на stdout, в формате series:score (например, ``random:400``)
 * ``<scriptname> series`` - печатает идентификатор категории на stdout, должен совпадать с таковым из id
 * ``<scriptname> name`` - печатает имя квеста на stdout
-* ``<scriptname> create <dump_dir> <team_id>`` - печатает описание нового теста на stdout в следующем формате (строки, начинающиеся с **text:**, **file:**, **timeout** - необязательны):
+* ``<scriptname> create <dump_dir> <team_id>`` - печатает описание нового квеста на stdout в следующем формате (строки, начинающиеся с **text:**, **file:**, **timeout:** - необязательны):
 
 
 .. code-block::
