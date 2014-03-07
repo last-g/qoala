@@ -17,7 +17,7 @@ from quests_quest quest
  left join quests_questvariant variant   on variant.quest_id = quest.id
  left join quests_questanswer  answer    on answer.quest_variant_id = variant.id and answer.is_checked and answer.is_success
 group by quest.id
-order by category.name, quest.score
+order by category.number, category.name, quest.score
 """
 
 def groupby(collection, key):

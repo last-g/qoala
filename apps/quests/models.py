@@ -3,6 +3,7 @@ from django.conf import settings
 from django.db.models.aggregates import Max
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
+import os
 import pickle
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils import timezone
@@ -20,13 +21,14 @@ from qserver.quest import *
 # Create your models here.
 from teams.models import Team
 
+
 def category_number():
-    return Category.objects.aggregate(num=Max('order'))['num'] or 1
+    return Category.objects.aggregate(num=Max('number'))['num'] or 1
 
 
 class Category(qtils.CreateAndUpdateDateMixin, models.Model):
     name = models.CharField(max_length=60)
-    order = models.IntegerField(default=category_number)
+    number = models.IntegerField(default=category_number)
 
 
 @python_2_unicode_compatible
@@ -40,6 +42,7 @@ class Quest(qtils.CreateAndUpdateDateMixin, qtils.ModelDiffMixin, models.Model):
 
     provider_type = models.CharField(max_length=60, blank=True)
     provider_file = models.FilePathField(path=settings.TASKS_DIR, recursive=True, allow_folders=False, allow_files=True)
+    provider_state = models.BinaryField(editable=False, null=True)
     provider_hash = models.CharField(max_length=60, editable=False)
 
     is_simple = models.BooleanField(_('Can be checked at main thread'), default=True, editable=True, blank=True)
@@ -49,10 +52,10 @@ class Quest(qtils.CreateAndUpdateDateMixin, qtils.ModelDiffMixin, models.Model):
 
     @property
     def name(self):
-        return self.provider.name
+        return self.provider.GetName()
 
     def _get_score(self):
-        return int(self.provider.id.split(':')[1])
+        return int(self.provider.GetId().split(':')[1])
 
     @staticmethod
     def get_hash(file_path):
@@ -67,23 +70,33 @@ class Quest(qtils.CreateAndUpdateDateMixin, qtils.ModelDiffMixin, models.Model):
         hashed = self.get_hash(provider_path)
         if hashed != self.provider_hash:
             provider = self.get_provider(provider_type, provider_path)
-            (category, _) = Category.objects.get_or_create(name=provider.series)
+            (category, _) = Category.objects.get_or_create(name=provider.GetSeries())
             self.category = category
             self.score = self._get_score()
             self.provider_hash = hashed
+            self.provider_state = pickle.dumps(provider)
+            if not provider_type.lower().count('xml'):
+                self.is_simple = False
 
     @staticmethod
     def get_provider(name, path):
         get_class = lambda x: globals()[x]
         ProviderClass = get_class(name)
-        return ProviderClass(path)
+        provider = ProviderClass(path)
+        provider.dir = os.path.join(settings.TASKS_DATA_DIR, os.path.basename(path))  # XXX: Monkey patch
+        return provider
 
     def is_open_for(self, team):
         return self.open_for.filter(pk=team.id).exists()
 
-    @property
+    @zp.Lazy
     def provider(self):
-        return self.get_provider(self.provider_type, self.provider_file)
+        if self.provider_state:
+            return pickle.loads(self.provider_state)
+        else:
+            provider = self.get_provider(self.provider_type, self.provider_file)
+            self.provider_state = pickle.dumps(provider)
+            return provider
 
     def invalidate_variants(self):
         self.questvariant_set.update(is_valid=False)
@@ -110,15 +123,16 @@ class Quest(qtils.CreateAndUpdateDateMixin, qtils.ModelDiffMixin, models.Model):
 
     def get_variant(self, team):
         team_id = team.id
-        last_variant = self.questvariant_set.filter(team_id=team_id).order_by('try_count').first()
-        if last_variant and last_variant.timeout < timezone.now() and last_variant.is_valid:
+        last_variant = self.questvariant_set.filter(team_id=team_id).order_by('-try_count').first()
+        if last_variant and timezone.now() < last_variant.timeout and last_variant.is_valid:
             return last_variant
 
-        next_version = last_variant.try_count if last_variant else 1
+        next_version = last_variant.try_count+1 if last_variant else 1
         return self._create_variant(team_id, next_version)
 
     def get_absolute_url(self):
         from django.core.urlresolvers import reverse
+
         return reverse('quests.views.open_task_by_id', args=[str(self.id)])
 
     def is_solved_by(self, team):
@@ -199,9 +213,10 @@ class QuestVariant(qtils.CreateAndUpdateDateMixin, models.Model):
 class QuestAnswer(qtils.CreateAndUpdateDateMixin, qtils.ModelDiffMixin, models.Model):
     """Model that describes someones try to score quest"""
     quest_variant = models.ForeignKey(QuestVariant, blank=False, null=False)
-    is_checked = models.BooleanField(default=False, null=False, blank=False)
 
+    is_checked = models.BooleanField(default=False, null=False, blank=False)
     is_success = models.BooleanField(default=False, null=False, blank=False)
+
     result = models.TextField(editable=True, blank=True, null=False)
     score = models.IntegerField(default=0, null=False, blank=False)
 
@@ -263,10 +278,12 @@ def invalidate_variants(sender, instance, **kwargs):
     if quest.get_field_diff('provider_hash'):
         quest.invalidate_variants()
 
+
 @receiver(post_save, sender=QuestAnswer)
 def open_quests(sender, instance, **kwargs):
     answer = instance
-    if answer.is_checked and answer.is_success and (answer.get_field_diff('is_checked') or answer.get_field_diff('is_success')):
+    if answer.is_checked and answer.is_success and (
+                answer.get_field_diff('is_checked') or answer.get_field_diff('is_success')):
         quest = answer.quest_variant.quest
         category = quest.category
         score = quest.score

@@ -17,6 +17,7 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 
 DATA_DIR = os.path.join(BASE_DIR, 'data')
 TASKS_DIR = os.path.join(DATA_DIR, 'tasks')
+TASKS_DATA_DIR = os.path.join(DATA_DIR, 'tmptasks')
 
 # App/Library Paths
 sys.path.append(os.path.join(BASE_DIR, 'apps'))
@@ -113,7 +114,7 @@ USE_L10N = True
 # If you set this to False, Django will not use timezone-aware datetimes.
 USE_TZ = True
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Yekaterinburg'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
