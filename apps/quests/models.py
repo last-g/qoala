@@ -3,6 +3,7 @@ from django.conf import settings
 from django.db.models.aggregates import Max
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
+import os
 import pickle
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils import timezone
@@ -19,6 +20,7 @@ from qserver.quest import *
 
 # Create your models here.
 from teams.models import Team
+
 
 def category_number():
     return Category.objects.aggregate(num=Max('number'))['num'] or 1
@@ -49,10 +51,10 @@ class Quest(qtils.CreateAndUpdateDateMixin, qtils.ModelDiffMixin, models.Model):
 
     @property
     def name(self):
-        return self.provider.name
+        return self.provider.GetName()
 
     def _get_score(self):
-        return int(self.provider.id.split(':')[1])
+        return int(self.provider.GetId().split(':')[1])
 
     @staticmethod
     def get_hash(file_path):
@@ -67,7 +69,7 @@ class Quest(qtils.CreateAndUpdateDateMixin, qtils.ModelDiffMixin, models.Model):
         hashed = self.get_hash(provider_path)
         if hashed != self.provider_hash:
             provider = self.get_provider(provider_type, provider_path)
-            (category, _) = Category.objects.get_or_create(name=provider.series)
+            (category, _) = Category.objects.get_or_create(name=provider.GetSeries())
             self.category = category
             self.score = self._get_score()
             self.provider_hash = hashed
@@ -119,6 +121,7 @@ class Quest(qtils.CreateAndUpdateDateMixin, qtils.ModelDiffMixin, models.Model):
 
     def get_absolute_url(self):
         from django.core.urlresolvers import reverse
+
         return reverse('quests.views.open_task_by_id', args=[str(self.id)])
 
     def is_solved_by(self, team):
