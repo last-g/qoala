@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<quest series="random" id="random:300" proto="xmlquest-2.0">
+    <name>Example XML quest</name>
+    <task type="html" lang="en">This is example quest, but <a href="static/d755defd206f4a71fd4118ca815ca3c5/task.rs">Find the key</a></task>
+    <task type="html" lang="ru">Это квест для примера, но <a href="static/d755defd206f4a71fd4118ca815ca3c5/task.rs">Найдите ключ</a></task>
+    <checker strict="yes">
+        <solution case="insensitive">semicolon</solution>
+        <solution case="sensitive">ZaBoRcHiCk</solution>
+    </checker>
+</quest>
