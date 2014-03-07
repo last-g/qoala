@@ -114,7 +114,7 @@ USE_L10N = True
 # If you set this to False, Django will not use timezone-aware datetimes.
 USE_TZ = True
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Yekaterinburg'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
