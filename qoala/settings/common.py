@@ -17,6 +17,7 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 
 DATA_DIR = os.path.join(BASE_DIR, 'data')
 TASKS_DIR = os.path.join(DATA_DIR, 'tasks')
+TASKS_DATA_DIR = os.path.join(DATA_DIR, 'tmptasks')
 
 # App/Library Paths
 sys.path.append(os.path.join(BASE_DIR, 'apps'))
