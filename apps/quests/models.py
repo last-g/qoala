@@ -21,7 +21,7 @@ from qserver.quest import *
 from teams.models import Team
 
 def category_number():
-    return Category.objects.aggregate(num=Max('order'))['num'] or 1
+    return Category.objects.aggregate(num=Max('number'))['num'] or 1
 
 
 class Category(qtils.CreateAndUpdateDateMixin, models.Model):
