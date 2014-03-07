@@ -124,11 +124,11 @@ class Quest(qtils.CreateAndUpdateDateMixin, qtils.ModelDiffMixin, models.Model):
 
     def get_variant(self, team):
         team_id = team.id
-        last_variant = self.questvariant_set.filter(team_id=team_id).order_by('try_count').first()
-        if last_variant and last_variant.timeout < timezone.now() and last_variant.is_valid:
+        last_variant = self.questvariant_set.filter(team_id=team_id).order_by('-try_count').first()
+        if last_variant and timezone.now() < last_variant.timeout and last_variant.is_valid:
             return last_variant
 
-        next_version = last_variant.try_count if last_variant else 1
+        next_version = last_variant.try_count+1 if last_variant else 1
         return self._create_variant(team_id, next_version)
 
     def get_absolute_url(self):
