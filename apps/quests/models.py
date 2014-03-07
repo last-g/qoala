@@ -275,10 +275,12 @@ def invalidate_variants(sender, instance, **kwargs):
     if quest.get_field_diff('provider_hash'):
         quest.invalidate_variants()
 
+
 @receiver(post_save, sender=QuestAnswer)
 def open_quests(sender, instance, **kwargs):
     answer = instance
-    if answer.is_checked and answer.is_success and (answer.get_field_diff('is_checked') or answer.get_field_diff('is_success')):
+    if answer.is_checked and answer.is_success and (
+                answer.get_field_diff('is_checked') or answer.get_field_diff('is_success')):
         quest = answer.quest_variant.quest
         category = quest.category
         score = quest.score
