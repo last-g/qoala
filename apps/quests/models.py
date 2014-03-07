@@ -75,7 +75,7 @@ class Quest(qtils.CreateAndUpdateDateMixin, qtils.ModelDiffMixin, models.Model):
             self.score = self._get_score()
             self.provider_hash = hashed
             self.provider_state = pickle.dumps(provider)
-            if not provider_type.lower().conunt('xml'):
+            if not provider_type.lower().count('xml'):
                 self.is_simple = False
 
 
