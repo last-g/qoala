@@ -106,7 +106,7 @@ ScriptQuestProvider
     file: <quest file>
 
 
-* ``<scriptname> user <dump_dir> <quest identificator>`` - из stdin читает строку, описывающие действие пользователя, на stdout выводит вердикт(текст, посылаемый пользователю)
+* ``<scriptname> user <dump_dir> <quest identificator>`` - из stdin читает строку, описывающие действие(ответ на таск) пользователя, на stdout выводит вердикт(текст, показываемый пользователю)
 
 Где:
 
