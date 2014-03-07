@@ -109,6 +109,8 @@ class QuestDescriptor(Unpickable(questID=str,
 
     @classmethod
     def FromTextMessage(self, message):
+        if hasattr(message, 'decode'):
+            message = message.decode("utf-8")
 
         quest = {'questID': [], 'text': {'en': [], 'ru': []}, 'html': {'en': [], 'ru': []}, 'file': [],
                  'timeout': []}
