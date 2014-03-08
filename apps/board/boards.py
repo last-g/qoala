@@ -16,7 +16,7 @@ from quests_quest quest
  left join quests_quest_open_for opens on opens.quest_id = quest.id and opens.team_id = %s
  left join quests_questvariant variant   on variant.quest_id = quest.id and variant.team_id = %s
  left join quests_questanswer  answer    on answer.quest_variant_id = variant.id and answer.is_checked and answer.is_success
-group by quest.id
+group by quest.id, category.id
 order by category.number, category.name, quest.score
 """
 
