@@ -167,7 +167,8 @@ class QuestVariant(qtils.CreateAndUpdateDateMixin, models.Model):
 
     @property
     def html(self):
-        return self.descriptor.raw_replace_patterns(self._get_html(), str(self.quest.id), str(self.team.id),
+        qid = self.quest.category.name + ':' + str(self.quest.score)
+        return self.descriptor.raw_replace_patterns(self._get_html(), str(qid), str(self.team.id),
                                                     settings.TASK_SALT)
 
     @zp.Lazy
