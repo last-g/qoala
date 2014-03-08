@@ -137,7 +137,7 @@ class Quest(qtils.CreateAndUpdateDateMixin, qtils.ModelDiffMixin, models.Model):
 
     def is_solved_by(self, team):
         return self.questvariant_set.filter(questanswer__is_success=True, questanswer__is_checked=True,
-                                            questanswer__team_id=team.id).exists()
+                                            team_id=team.id).exists()
 
     def can_watch(self, team):
         return self.open_for.filter(pk=team.id).exists()
