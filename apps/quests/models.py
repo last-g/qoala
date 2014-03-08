@@ -140,7 +140,7 @@ class Quest(qtils.CreateAndUpdateDateMixin, qtils.ModelDiffMixin, models.Model):
                                             questanswer__team_id=team.id).exists()
 
     def can_watch(self, team):
-        return self.open_for.filter(team_id=team.id).exists()
+        return self.open_for.filter(pk=team.id).exists()
 
     def can_answer(self, team):
         return self.can_watch(team) and not self.is_solved_by(team)
