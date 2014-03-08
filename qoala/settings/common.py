@@ -47,6 +47,11 @@ ALLOWED_HOSTS = []
 AUTH_USER_MODEL = "teams.Team"
 AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend', 'teams.auth.TokenAuthBackend')
 
+LOGIN_REDIRECT_URL = '/'
+LOGIN_URL = '/teams/login'
+LOGOUT_URL = '/teams/logout'
+
+
 # Application definition
 
 INSTALLED_APPS = (
