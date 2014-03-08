@@ -6,8 +6,14 @@
 
 {% block content %}
 
-    <span>
-        {{ team.name }} $$ {{ team.id }}
-    </span>
+    <h1>{{ team.name }}</h1>
+
+    <div class="solved-tasks">
+        {% for task in solved_tasks %}
+            <div class="task">
+                <span>{{ task.name  }}:{{ task.score }} </span>
+            </div>
+        {% endfor %}
+    </div>
 
 {% endblock %}
