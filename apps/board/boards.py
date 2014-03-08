@@ -54,7 +54,7 @@ def get_task_board(team):
 
 
 scores_sql = """
-select team.*, sum(answer.score) as score
+select team.*, sum(COALESCE(answer.score,0)) as score
  from teams_team team
  left join quests_questvariant variant   on variant.team_id = team.id
 -- left join quests_quest        quest     on quest.id = variant.quest_id
