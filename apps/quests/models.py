@@ -70,11 +70,11 @@ class Quest(qtils.CreateAndUpdateDateMixin, qtils.ModelDiffMixin, models.Model):
         hashed = self.get_hash(provider_path)
         if hashed != self.provider_hash:
             provider = self.get_provider(provider_type, provider_path)
+            self.provider_state = pickle.dumps(provider)
+            self.provider_hash = hashed
             (category, _) = Category.objects.get_or_create(name=provider.GetSeries())
             self.category = category
             self.score = self._get_score()
-            self.provider_hash = hashed
-            self.provider_state = pickle.dumps(provider)
             if not provider_type.lower().count('xml'):
                 self.is_simple = False
 
