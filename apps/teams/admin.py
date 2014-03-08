@@ -11,6 +11,9 @@ class TeamAdmin(admin.ModelAdmin):
         'last_login',
 #        'password',
     )
+    list_display = ('name', 'is_active', 'is_staff', 'is_superuser')
+    list_editable = ('is_active', 'is_staff', 'is_superuser')
+    list_filter = ('is_active', 'is_staff', 'is_superuser')
 
     search_fields = ('name', )
     readonly_fields = ('last_login', 'password')

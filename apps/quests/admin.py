@@ -35,6 +35,7 @@ class QuestAnswerAdmin(admin.ModelAdmin):
     fields = ('quest_variant', ('score', 'is_checked', 'is_success'), 'answer', 'result')
     list_display = ('quest_name', 'team', 'is_checked', 'is_success', 'answer')
     list_filter = ('quest_variant__quest', 'quest_variant__team', 'is_checked', 'is_success')
+    list_editable = ('is_checked', 'is_success')
     list_select_related = ('quest_variant',)
     search_fields = ('answer', 'quest_variant__quest__shortname')
 #    readonly_fields = ('quest_name', 'team')
