@@ -243,7 +243,7 @@ def check_answer(sender, instance, created, **kwargs):
     answer = instance
     quest = answer.quest_variant.quest
     if created and not quest.is_manual and not answer.is_checked:
-        if quest.is_simple and False:
+        if quest.is_simple or True:
             tasks.check_answer(answer)
         else:
             tasks.check_answer.delay(answer)
