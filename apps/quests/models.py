@@ -75,7 +75,7 @@ class Quest(qtils.CreateAndUpdateDateMixin, qtils.ModelDiffMixin, models.Model):
             (category, _) = Category.objects.get_or_create(name=provider.GetSeries())
             self.category = category
             self.score = self._get_score()
-            self.quest.invalidate_variants()
+            self.invalidate_variants()
             if not provider_type.lower().count('xml'):
                 self.is_simple = False
 
