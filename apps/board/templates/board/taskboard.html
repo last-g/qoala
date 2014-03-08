@@ -11,11 +11,15 @@
           {% for task in tasks %}
             <div class="task">
               {% if task.is_solved %}
-                <p><a class="btn btn-success" disabled="disabled">{{ task.score }}. {{ task.name }}</a></p>
+                {% if user.is_authenticated %}
+                  <p><a class="btn btn-success" disabled="disabled" title="Task is already solved"><span class="glyphicon glyphicon-ok"></span> {{ task.score }}. {{ task.name }}</a></p>
+                {% else %}
+                  <p><a class="btn btn-default btn-border-success" disabled="disabled"> {{ task.score }}. {{ task.name }}</a></p>
+                {% endif %}
               {% elif task.is_open %}
                 <p><a class="btn btn-primary" href="{{ task.get_absolute_url }}" role="button">{{ task.score }}. {{ task.name }}</a></p>
               {% else %}
-                <p><a class="btn btn-default" disabled="disabled">{{ task.score }}. {{ task.name }}</a></p>
+                <p><a class="btn btn-default" disabled="disabled" title="Task is closed">{{ task.score }}. {{ task.name }}</a></p>
               {% endif %}
             </div>
           {% endfor %}

@@ -12,10 +12,11 @@
       <form class="form-inline" role="form" action="{% url 'quests.views.answer_task_by_id' variant.quest.id %}" method="post">
        {% csrf_token %}
         <div class="form-group">
-          <label class="sr-only" for="task-answer">Email address</label>
+          <label class="sr-only" for="task-answer">Enter flag</label>
           <input type="text" class="form-control" id="task-answer" placeholder="Enter flag" name="answer">
         </div>
         <button type="submit" class="btn btn-default">Send</button>
+        {% block verdict %} {% endblock %}
       </form>
     </div>
 {% endblock %}

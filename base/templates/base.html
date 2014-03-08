@@ -34,20 +34,26 @@
               <ul class="nav navbar-nav navbar-right">
                 <li><a href="{% url "board.views.task_board" %}">Tasks</a></li>
                 <li><a href="{% url "board.views.score_board" %}">Scoreboard</a></li>
-                <li><a href="{{ user.get_absolute_url }}">Profile</a></li>
+                <li><a href="{{ user.get_absolute_url }}">Profile [{{ user.name }}]</a></li>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
               </ul>
-              <form class="navbar-form navbar-right">
-                <button type="submit" class="btn btn-success" href="{% url 'logout' %}">Logout</button>
-              </form>              
             </div>
           {% else %}
-            <form class="navbar-form navbar-right" role="form" action="{% url 'login' %}" method="POST">
-              {% csrf_token %}
-              <div class="form-group">
-                <input type="text" placeholder="Token" class="form-control" name="token">
-              </div>
-              <button type="submit" class="btn btn-success">Sign in</button>
-            </form>
+            <div class="navbar-collapse collapse">
+              <ul class="nav navbar-nav navbar-right">
+                <li><a href="{% url "board.views.task_board" %}">Tasks</a></li>
+                <li><a href="{% url "board.views.score_board" %}">Scoreboard</a></li>
+              </ul>              
+              <form class="navbar-form navbar-right" role="form" action="{% url 'login' %}" method="POST">
+                {% csrf_token %}
+                {% block login-form-group %}
+                <div class="form-group">                  
+                  <input type="text" placeholder="Token" class="form-control" name="token">
+                </div>
+                {% endblock %}
+                <button type="submit" class="btn btn-success">Sign in</button>
+              </form>
+            </div>
           {% endif %}
 
       </div>

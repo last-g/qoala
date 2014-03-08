@@ -1,23 +1,36 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block title %}
+{% block title %}Your answer{% endblock %}
+
+{% block page_header %}
+    {% if answer.is_checked and answer.is_success %}
+      <a href="{% url "board.views.task_board" %}">&larr;</a> Result
+    {% else %}
+      <a href="{% url "quests.views.open_task_by_id" answer.quest_variant.quest.id %}">&larr;</a> Result
+    {% endif %}
 {% endblock %}
 
 {% block content %}
     {% if answer.is_checked %}
         {% if answer.is_success %}
             {% blocktrans %}
-                Gratz! You've hacked!
+              <div class="bs-callout bs-callout-info">
+                <h4>Correct!</h4>
+              </div>
             {% endblocktrans %}
         {% else %}
             {% blocktrans %}
-                NOWAY!
+              <div class="bs-callout bs-callout-danger">
+                <h4>Wrong flag!</h4>
+              </div>
             {% endblocktrans %}
         {% endif %}
     {% else %}
         {% blocktrans %}
-            Sorry, but your answer is not checked yet
+           <div class="bs-callout bs-callout-info">
+             <h4>Sorry, but your answer is not checked yet</h4>
+           </div>
         {% endblocktrans %}
     {% endif %}
 {% endblock %}

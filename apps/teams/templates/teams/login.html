@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block content %}
+{% comment %}
 
     <form action="{% url 'login' %}" method="post" >
         {% csrf_token %}
@@ -8,4 +8,16 @@
         <input type="submit" value="Login">
     </form>
 
-{% endblock %}
+{% endcomment %}
+
+{% if form.token.errors %}
+
+  {% block login-form-group %}
+  <div class="form-group has-error has-feedback">                  
+    <label class="control-label" for="token">Invalid token&nbsp;</label>
+    <input type="text" placeholder="Token" class="form-control" name="token">
+    <span class="glyphicon glyphicon-remove form-control-feedback"></span>
+  </div>
+  {% endblock %}
+
+{% endif %}
