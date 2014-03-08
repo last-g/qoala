@@ -5,11 +5,14 @@ from .forms import TokenAuthForm
 from .models import Team
 
 # Create your views here.
+from quests.models import Quest
 
 
 def show(req, name):
     team = get_object_or_404(Team, name=name)
-    return render(req, 'teams/show.html', {"team": team})
+    solved_tasks = Quest.objects.filter(questvariant__team_id=team.id, questvariant__questanswer__is_checked=True,
+                                        questvariant__questanswer__is_success=True).select_related('category')
+    return render(req, 'teams/show.html', {"team": team, "solved_tasks": solved_tasks})
 
 
 def do_login(request):
@@ -41,8 +44,8 @@ def set_lang(request, lang_code):
     from django.utils import translation
 
     translation.activate(lang_code)
- #   request.session[translation.LANGUAGE_SESSION_KEY] = lang_code
+    #   request.session[translation.LANGUAGE_SESSION_KEY] = lang_code
     response = redirect(request.META['HTTP_REFERER'])
     response.set_cookie(settings.LANGUAGE_COOKIE_NAME, lang_code)
     return response
-#    return
+    #    return
