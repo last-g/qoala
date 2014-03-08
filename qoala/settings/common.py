@@ -60,7 +60,6 @@ INSTALLED_APPS = (
 
     # Third-party apps, patches, fixes
     'djcelery',
-    'debug_toolbar',
 
     # Database migrations
     'south',
@@ -83,7 +82,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
 ROOT_URLCONF = 'qoala.urls'
@@ -150,6 +148,6 @@ DEBUG_TOOLBAR_CONFIG = {
 
 # Uncomment these to activate and customize Celery:
 # CELERY_ALWAYS_EAGER = False  # required to activate celeryd
-BROKER_URL = 'amqp://guest:guest@localhost//'
+#BROKER_URL = 'amqp://guest:guest@localhost//'
 
 
