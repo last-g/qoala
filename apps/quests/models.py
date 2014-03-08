@@ -136,10 +136,11 @@ class Quest(qtils.CreateAndUpdateDateMixin, qtils.ModelDiffMixin, models.Model):
         return reverse('quests.views.open_task_by_id', args=[str(self.id)])
 
     def is_solved_by(self, team):
-        return self.questvariant_set.filter(questanswer__is_success=True, questanswer__is_checked=True).exists()
+        return self.questvariant_set.filter(questanswer__is_success=True, questanswer__is_checked=True,
+                                            questanswer__team_id=team.id).exists()
 
     def can_watch(self, team):
-        return self.open_for.filter(pk=team.id).exists()
+        return self.open_for.filter(team_id=team.id).exists()
 
     def can_answer(self, team):
         return self.can_watch(team) and not self.is_solved_by(team)

@@ -28,8 +28,8 @@ DEBUG = True
 TEMPLATE_DEBUG = True
 DEV = True
 
-INSTALLED_APPS += ('debug_toolbar')
-MIDDLEWARE_CLASSES += ('debug_toolbar.middleware.DebugToolbarMiddleware')
+INSTALLED_APPS += ('debug_toolbar',)
+MIDDLEWARE_CLASSES += ('debug_toolbar.middleware.DebugToolbarMiddleware', )
 
 BROKER_URL = 'django://'
 CELERY_ALWAYS_EAGER = True
