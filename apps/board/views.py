@@ -12,7 +12,7 @@ def task_board(request):
     return render(request, 'board/taskboard.html', {'by_categories': tasks_by_category})
 
 
-@condition(last_modified_func=scoreboard_modified)
+#@condition(last_modified_func=scoreboard_modified)
 def score_board(request):
     scores = get_scoreboard()
     return render(request, 'board/scoreboard.html', {'teams': scores})
