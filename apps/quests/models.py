@@ -25,10 +25,13 @@ from teams.models import Team
 def category_number():
     return Category.objects.aggregate(num=Max('number'))['num'] or 1
 
-
+@python_2_unicode_compatible
 class Category(qtils.CreateAndUpdateDateMixin, models.Model):
     name = models.CharField(max_length=60)
     number = models.IntegerField(default=category_number)
+
+    def __str__(self):
+        return self.name
 
 
 @python_2_unicode_compatible
