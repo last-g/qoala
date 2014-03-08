@@ -14,7 +14,7 @@ select quest.*, category.name as category_name , sum(opens.team_id) as is_open ,
 from quests_quest quest
  join quests_category category on quest.category_id = category.id
  left join quests_quest_open_for opens on opens.quest_id = quest.id and opens.team_id = %s
- left join quests_questvariant variant   on variant.quest_id = quest.id
+ left join quests_questvariant variant   on variant.quest_id = quest.id and variant.team_id = %s
  left join quests_questanswer  answer    on answer.quest_variant_id = variant.id and answer.is_checked and answer.is_success
 group by quest.id
 order by category.number, category.name, quest.score
@@ -43,7 +43,7 @@ def groupby(collection, key):
 
 
 def get_task_board(team):
-    quests = list(Quest.objects.raw(board_sql, [team.id]))
+    quests = list(Quest.objects.raw(board_sql, [team.id, team.id]))
     print(len(quests))
 #    by_category = itertools.groupby(quests, attrgetter('category_name'))
 #    by_category = defaultdict(list)
