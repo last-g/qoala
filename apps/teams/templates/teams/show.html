@@ -2,16 +2,14 @@
 
 {% block title %}Team {{ team.name }}{% endblock %}
 
-{% block page_header %}Hello, Kitty!{% endblock %}
+{% block page_header %}{{ team.name }}-center!{% endblock %}
 
 {% block content %}
-
-    <h1>{{ team.name }}</h1>
-
+    
     <div class="solved-tasks">
         {% for task in solved_tasks %}
             <div class="task">
-                <span>{{ task.name  }}:{{ task.score }} </span>
+                <h5>{{ task.name  }} <span class="badge">{{ task.category.name }} : {{ task.score }}</span></h5>
             </div>
         {% endfor %}
     </div>
