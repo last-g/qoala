@@ -20,11 +20,12 @@
               </div>
             {% endblocktrans %}
         {% else %}
-            {% blocktrans %}
               <div class="bs-callout bs-callout-danger">
                 <h4>Wrong flag!</h4>
+		{% if answer.result %}
+			<h5>{{ answer.result }}</h5>
+		{% endif %}
               </div>
-            {% endblocktrans %}
         {% endif %}
     {% else %}
         {% blocktrans %}
