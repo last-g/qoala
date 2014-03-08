@@ -275,7 +275,7 @@ def load_initial(sender, instance, **kwargs):
         quest.update_from_file(quest.provider_type, quest.provider_file)
 
 
-@receiver(post_save, sender=Quest)
+@receiver(pre_save, sender=Quest)
 def invalidate_variants(sender, instance, **kwargs):
     quest = instance
     if quest.get_field_diff('provider_hash'):
