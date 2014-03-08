@@ -90,10 +90,10 @@ ScriptQuestProvider
 
 Квест описывается одним скриптом. Для получения информации о квесте ScriptQuestProvider вызывает скрипт с разными параметрами.
 
-* ``<scriptname> id`` - печатает идентификатор теста на stdout, в формате series:score (например, ``random:400``)
+* ``<scriptname> id`` - печатает идентификатор квеста на stdout, в формате series:score (например, ``random:400``)
 * ``<scriptname> series`` - печатает идентификатор категории на stdout, должен совпадать с таковым из id
 * ``<scriptname> name`` - печатает имя квеста на stdout
-* ``<scriptname> create <dump_dir> <team_id>`` - печатает описание нового теста на stdout в следующем формате (строки, начинающиеся с **text:**, **html:**, **file:** - необязательны):
+* ``<scriptname> create <dump_dir> <team_id>`` - печатает описание нового квеста на stdout в следующем формате (строки, начинающиеся с **text:**, **file:**, **timeout:** - необязательны):
 
 
 .. code-block::
@@ -103,6 +103,7 @@ ScriptQuestProvider
     text[ru]: <quest text description>
     html[en]: <quest html description>
     html[ru]: <quest html description>
+    timeout: <quest timeout>
     file: <quest file>
 
 
@@ -110,10 +111,12 @@ ScriptQuestProvider
 
 Где:
 
+* ``<quest identificator>`` - идентефикатор, который возвращает чекер при ``<scriptname> create`` (поле ID: ).
 * ``<quest file>`` - файл расположенный в дирректории  ``static``, который будет предложено скачать команде
 * ``<dump_dir>`` - каталог, куда можно сохранять данные между вызовами и где можно найти ранее сохраненные данные
-* ``<quest identificator>`` - идентефикатор, который возвращает чекер при ``<scriptname> create`` (поле ID: ).
 * ``<team_id>`` - id команды
+* ``<quest timeout>`` - время в секундах, в течении которого квест действителен.
+По истечению этого времени Qoala запросит новый квест у чекера.
 
 Все вызовы обязаны возвращать ERRORLEVEL 0, противное поведение считается падением скрипта. Исключением является вызов ``<scriptname> user <dump_dir> <quest identificator>``. В этом случае, если скрипт возвращает 0, то считается, что пользователь успешно решил квест, другие возвращаемые значения идентифицируют, что пользователь ошибся.
 
