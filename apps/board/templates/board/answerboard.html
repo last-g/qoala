@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block scripts %}
+    {{ block.super }}
+    <script type='text/javascript' src="http://cdnjs.cloudflare.com/ajax/libs/knockout/3.1.0/knockout-min.js"></script>
+<!--
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+<!-- -->
+{% endblock %}
+
+{% block content %}
+    <style type="text/css">
+        .solved {
+            background: red;
+        }
+    </style>
+
+    <script>
+        var url =  "{% url 'board.views.get_last_answers' %}"
+        function get_data(data_callback, answer) {
+            $.post(url, {
+                'min_date' : answer.created_at(),
+                'id' : answer.id()
+            }).done(data_callback);
+        }
+        function map_tasks(data) {
+            return $.map(data, function(item) { return new Answer(item) });
+        }
+
+        var initial = {{ answers|safe }};
+
+        function Answer(data){
+            this.is_checked = ko.observable(data.is_checked)
+            this.is_success = ko.observable(data.is_success)
+            this.team = ko.observable(data.quest_variant__team__name)
+            this.quest = ko.observable(data.quest_variant__quest__shortname)
+            this.answer = ko.observable(data.answer)
+            this.result = ko.observable(data.result)
+            this.created_at = ko.observable(data.created_at)
+            this.created = new Date(data.created_at)
+            this.id = ko.observable(data.id)
+        }
+        var ViewModel = function(initial) {
+            self = this
+            this.answers = ko.observableArray(map_tasks(initial))
+            this.last_answer = ko.computed(function(){
+                if(self.answers()) {
+                    return self.answers()[0]
+                }
+            })
+            this.append_data = function append_data(data) {
+                console.log("Got data batch: " + data.length)
+                map_tasks(data).reverse().forEach(function(element){
+                    self.answers.unshift(element)
+                })
+
+            }
+
+            this.load_data = function load_data() {
+                get_data(self.append_data, self.last_answer())
+            }
+
+            setInterval(self.load_data, 1000);
+        };
+    </script>
+
+    <div class="answer-list">
+        <ul data-bind="foreach: answers, visible: answers().length > 0">
+            <div class="answer row" data-bind="css: { 'alert-success': (is_checked() && is_success()), 'alert-danger': (is_checked() && !is_success()) }">
+                <div class="team_name   col-xs-1" data-bind="text: team"></div>
+                <div class="quest_name  col-xs-1" data-bind="text: quest"></div>
+                <div class="answer_text col-xs-4" data-bind="text: answer"></div>
+                <div class="answer_time col-xs-5" data-bind="text: created"></div>
+            </div>
+        </ul>
+    </div>
+
+    <script>
+        app = new ViewModel(initial)
+        ko.applyBindings(app);
+//        app.answers(map_tasks(initial))
+
+    </script>
+
+{% endblock %}
