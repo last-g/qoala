@@ -52,7 +52,7 @@
                 $.post(more_url, {
                     //'min_date' : answer.created_at,
                     'id' : answer.id,
-                    'count': 20
+                    'count': 100
                 }).done(data_callback).done(function() {
                     app.pending_request()
                 }).error( function(){
@@ -150,7 +150,7 @@
             }
 
             this.loader = setInterval(self.load_data, 1000);
-            this.moares = setInterval(self.visible_checker, 1000);
+            this.moares = setInterval(self.visible_checker, 500);
 
         };
     </script>
