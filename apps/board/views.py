@@ -29,7 +29,8 @@ def default_request():
     return QuestAnswer.objects.order_by('-created_at').values(
         'answer', 'result', 'is_checked', 'is_success',
         'quest_variant__quest__shortname', 'quest_variant__team__name',
-        'created_at', 'id'
+        'created_at', 'id',
+        'quest_variant__quest__score', 'quest_variant__quest__category__name'
     )
 
 @csrf_exempt

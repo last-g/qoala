@@ -22,8 +22,8 @@
         var url =  "{% url 'board.views.get_last_answers' %}"
         function get_data(data_callback, answer) {
             $.post(url, {
-                'min_date' : answer.created_at(),
-                'id' : answer.id()
+                'min_date' : answer.created_at,
+                'id' : answer.id,
             }).done(data_callback);
         }
         function map_tasks(data) {
@@ -33,15 +33,17 @@
         var initial = {{ answers|safe }};
 
         function Answer(data){
-            this.is_checked = ko.observable(data.is_checked)
-            this.is_success = ko.observable(data.is_success)
-            this.team = ko.observable(data.quest_variant__team__name)
-            this.quest = ko.observable(data.quest_variant__quest__shortname)
-            this.answer = ko.observable(data.answer)
-            this.result = ko.observable(data.result)
-            this.created_at = ko.observable(data.created_at)
+            this.is_checked = data.is_checked
+            this.is_success = data.is_success
+            this.team = data.quest_variant__team__name
+            this.quest = data.quest_variant__quest__shortname
+            this.answer = data.answer
+            this.result = data.result
+            this.created_at = data.created_at
             this.created = new Date(data.created_at)
-            this.id = ko.observable(data.id)
+            this.id = data.id
+            this.score = data.quest_variant__quest__score
+            this.category = data.quest_variant__quest__category__name
         }
         var ViewModel = function(initial) {
             self = this
@@ -69,11 +71,12 @@
 
     <div class="answer-list">
         <ul data-bind="foreach: answers, visible: answers().length > 0">
-            <div class="answer row" data-bind="css: { 'alert-success': (is_checked() && is_success()), 'alert-danger': (is_checked() && !is_success()) }">
-                <div class="team_name   col-xs-1" data-bind="text: team"></div>
-                <div class="quest_name  col-xs-1" data-bind="text: quest"></div>
+            <div class="answer row" data-bind="css: { 'alert-success': (is_checked && is_success), 'alert-danger': (is_checked && !is_success) }">
+                <div class="team_name   col-xs-2" data-bind="text: team"></div>
+                <div class="quest_id    col-xs-1" data-bind="text: (category + ':' + score)"></div>
+                <div class="quest_name  col-xs-2" data-bind="text: quest"></div>
                 <div class="answer_text col-xs-4" data-bind="text: answer"></div>
-                <div class="answer_time col-xs-5" data-bind="text: created"></div>
+                <div class="answer_time col-xs-2" data-bind="text: created.toLocaleString()"></div>
             </div>
         </ul>
     </div>
