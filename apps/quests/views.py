@@ -1,8 +1,10 @@
+from datetime import timedelta
 import django
 from django.contrib.auth.decorators import login_required
 from django.http.response import HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template import response
+from django.conf import settings
 from django.utils.translation import ugettext as _
 from . import models
 from . import forms
@@ -33,6 +35,11 @@ def open_task_by_name(req, task_name):
 def answer_task(request, task):
     if not task.can_answer(request.user):
         return HttpResponseForbidden(_("You can't answer this task"))
+
+    if models.QuestAnswer.count_by_time(request.user, period=timedelta(minutes=1)) > settings.ANSWERS_PER_MINUTE:
+        return HttpResponseForbidden(
+            _("You can make only {} answers per minute. Wait a little bit and do not bruteforce".format(settings.ANSWERS_PER_MINUTE)))
+
     if request.method == 'POST':
         form = forms.AnswerForm(request.POST)
         if form.is_valid():
