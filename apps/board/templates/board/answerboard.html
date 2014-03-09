@@ -7,8 +7,8 @@
 <!--
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 
-    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
-    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js"></script>
 <!-- -->
 {% endblock %}
 
@@ -20,13 +20,47 @@
     </style>
 
     <script>
-        var url =  "{% url 'board.views.get_last_answers' %}"
-        function get_data(data_callback, answer) {
-            $.post(url, {
+    $.fn.isOnScreen = function(){
+        var win = $(window);
+
+        var viewport = {
+            top : win.scrollTop(),
+            left : win.scrollLeft()
+        };
+        viewport.right = viewport.left + win.width();
+        viewport.bottom = viewport.top + win.height();
+
+        var bounds = this.offset();
+        bounds.right = bounds.left + this.outerWidth();
+        bounds.bottom = bounds.top + this.outerHeight();
+
+        return (!(viewport.right < bounds.left || viewport.left > bounds.right || viewport.bottom < bounds.top || viewport.top > bounds.bottom));
+    };
+    </script>
+
+    <script>
+        var latest_url =  "{% url 'board.views.get_last_answers' %}"
+        var more_url = "{% url 'board.views.get_more_answers' %}"
+        function get_latest_data(data_callback, answer) {
+            $.post(latest_url, {
                 'min_date' : answer.created_at,
                 'id' : answer.id,
             }).done(data_callback);
         }
+        function get_more_data(data_callback, answer) {
+            if (!app.pending_request()) {
+                $.post(more_url, {
+                    //'min_date' : answer.created_at,
+                    'id' : answer.id,
+                    'count': 20
+                }).done(data_callback).done(function() {
+                    app.pending_request()
+                }).error( function(){
+                   app.pending_request(false)
+                });
+            }
+        }
+
         function map_tasks(data) {
             return $.map(data, function(item) { return new Answer(item) });
         }
@@ -50,7 +84,7 @@
                 return _.every(self.search_patterns(), function(pattern) {
                     return _.some(self.search_fields(), function(field) {
                     // console.log('Check' + element + ' vs ' + field)
-                       return _.contains(element[field] + '', pattern)
+                       return _.contains((element[field] + '').toLowerCase(), pattern)
                     })
                 })
             }
@@ -59,7 +93,7 @@
             self = this
             this.search_string = ko.observable('')
             this.search_patterns = ko.computed(function() {
-                return self.search_string().trim().split(/\s+/);
+                return self.search_string().trim().toLowerCase().split(/\s+/);
             })
             this.answers = ko.observableArray(map_tasks(initial))
             this.last_answer = ko.computed(function(){
@@ -67,10 +101,16 @@
                     return self.answers()[0]
                 }
             })
+            this.oldest_answer = ko.computed(function(){
+                if(self.answers()) {
+                    return self.answers()[self.answers().length-1]
+                }
+            })
 
             this.search_fields = ko.observableArray([
                     'team', 'quest', 'answer', 'score', 'category'
             ])
+            this.pending_request = ko.observable(false)
 
             this.append_data = function append_data(data) {
                 // console.log("Got data batch: " + data.length)
@@ -80,26 +120,57 @@
 
             }
 
-            this.load_data = function load_data() {
-                get_data(self.append_data, self.last_answer())
+            this.unshift_data = function(data) {
+                map_tasks(data).forEach(function(element){
+                    self.answers.push(element)
+                })
             }
 
-            setInterval(self.load_data, 1000);
+            this.load_data = function load_data() {
+                get_latest_data(self.append_data, self.last_answer())
+            }
+
+            this.load_more = function () {
+                get_more_data(self.unshift_data, self.oldest_answer())
+            }
+            this.scrolled = function(data, event) {
+                console.log("Have scrolled")
+                console.log(data)
+                console.log(event)
+
+                var elem = event.target;
+                if (elem.scrollTop > (elem.scrollHeight - elem.offsetHeight - 200)) {
+                    self.load_more();
+                }
+            };
+            this.visible_checker = function() {
+                if ($('#show-more').isOnScreen()) {
+                    self.load_more()
+                }
+            }
+
+            this.loader = setInterval(self.load_data, 1000);
+            this.moares = setInterval(self.visible_checker, 1000);
+
         };
     </script>
 
     <div class="answer-list">
         <ul class="row">
-            <input type="search" class="form-control" data-bind="value: search_string" placeholder="Search here">
+            <input type="search" class="form-control" data-bind="value: search_string, valueUpdate: 'afterkeydown', , event: { scroll: $root.scrolled }" placeholder="Search here">
         </ul>
         <ul data-bind="foreach: answers, visible: answers().length > 0">
-            <div class="answer row" data-bind="visible: filter($data), css: { 'alert-success': (is_checked && is_success), 'alert-danger': (is_checked && !is_success) }">
+            <div class="answer row" data-bind="visible: filter($data), css: { 'alert-success': (is_checked && is_success), 'alert-danger': (is_checked && !is_success) }, event: { scroll: $root.scrolled }">
+                <div class="team_name   col-xs-1" data-bind="text: id"></div>
                 <div class="team_name   col-xs-2" data-bind="text: team"></div>
                 <div class="quest_id    col-xs-1" data-bind="text: (category + ':' + score)"></div>
                 <div class="quest_name  col-xs-2" data-bind="text: quest"></div>
                 <div class="answer_text col-xs-4" data-bind="text: answer"></div>
                 <div class="answer_time col-xs-2" data-bind="text: created.toLocaleString()"></div>
             </div>
+        </ul>
+        <ul>
+            <div id="show-more" class="btn btn-primary btn-block" data-bind="disables: pending_request">More</div>
         </ul>
     </div>
 

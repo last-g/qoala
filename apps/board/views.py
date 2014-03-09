@@ -1,3 +1,4 @@
+from __future__ import print_function
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http.response import HttpResponse
@@ -5,6 +6,8 @@ from django.shortcuts import render
 from datetime import timedelta
 from django.views.decorators.csrf import csrf_exempt
 import json
+import logging
+import sys
 
 from .boards import *
 
@@ -26,7 +29,7 @@ def check_is_superuser(user):
     return user.is_superuser
 
 def default_request():
-    return QuestAnswer.objects.order_by('-created_at').values(
+    return QuestAnswer.objects.order_by('-created_at', '-id').values(
         'answer', 'result', 'is_checked', 'is_success',
         'quest_variant__quest__shortname', 'quest_variant__team__name',
         'created_at', 'id',
@@ -57,6 +60,20 @@ def get_last_answers(request):
     response = json.dumps(list(answers), cls=DjangoJSONEncoder)
 #    response = json_serializer.serialize(list(answers))
     return HttpResponse(response, mimetype="application/json")
+
+@csrf_exempt
+@user_passes_test(check_is_superuser)
+@login_required
+def get_more_answers(request):
+    last_id = request.POST['id']
+    count = int(request.POST.get('count', 70))
+#    max_date = request.POST.get('max_date', None)
+#    task_name = request.POST.get('task_name') or None
+
+    answers = default_request().filter(id__lt=last_id)[0:count]
+    response = json.dumps(list(answers), cls=DjangoJSONEncoder)
+    return HttpResponse(response, mimetype="application/json")
+
 
 @user_passes_test(check_is_superuser)
 @login_required
