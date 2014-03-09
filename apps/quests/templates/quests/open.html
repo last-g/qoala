@@ -19,4 +19,13 @@
         {% block verdict %} {% endblock %}
       </form>
     </div>
+
+    <div id="solved-by">
+        <h2>Already solved by</h2>
+        {% for team in variant.quest.solved_by %}
+            <div class="teams">
+                <a href="{% url 'teams.views.show' team.name %}">{{ team.name }}</a>
+            </div>
+        {%  endfor %}
+    </div>
 {% endblock %}
