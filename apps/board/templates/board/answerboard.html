@@ -90,7 +90,7 @@
 
     <div class="answer-list">
         <ul class="row">
-            <input type="search" class="form-control" data-bind="value: searh_string" placeholder="Search here">
+            <input type="search" class="form-control" data-bind="value: search_string" placeholder="Search here">
         </ul>
         <ul data-bind="foreach: answers, visible: answers().length > 0">
             <div class="answer row" data-bind="visible: filter($data), css: { 'alert-success': (is_checked && is_success), 'alert-danger': (is_checked && !is_success) }">
