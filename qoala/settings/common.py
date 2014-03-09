@@ -33,6 +33,8 @@ SECRET_KEY = '3tqlw0=fqml%ivszvim&8)$(%&#_69cmulxm-4ai-fib9=+#%*'
 
 TASK_SALT = "asdkajdlkasjdlkajsdlkajlskdjalksdjkl"
 
+ANSWERS_PER_MINUTE = 30
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 

@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-from django.db.models.aggregates import Max
+from django.db.models.aggregates import Max, Count
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 import os
@@ -8,7 +8,7 @@ import pickle
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils import timezone
 from django.utils.translation import get_language
-from datetime import timedelta
+from datetime import timedelta, datetime
 from django.utils.html import escape
 from zope.cachedescriptors import property as zp
 from django.utils.translation import ugettext as _
@@ -24,6 +24,7 @@ from teams.models import Team
 
 def category_number():
     return Category.objects.aggregate(num=Max('number'))['num'] or 1
+
 
 @python_2_unicode_compatible
 class Category(qtils.CreateAndUpdateDateMixin, models.Model):
@@ -229,6 +230,11 @@ class QuestAnswer(qtils.CreateAndUpdateDateMixin, qtils.ModelDiffMixin, models.M
 
     answer = models.TextField()
     answer_file = models.FileField(upload_to="media", editable=False)
+
+    @classmethod
+    def count_by_time(cls, team, period=timedelta(minutes=1)):
+        return cls.objects.filter(quest_variant__team__id=team.id, created_at__gte=timezone.now() - period).aggregate(
+            count=Count('id'))['count']
 
     def check(self):
         status, message = self.quest_variant.check(self.answer)
