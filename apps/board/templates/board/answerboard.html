@@ -161,7 +161,6 @@
         </ul>
         <ul data-bind="foreach: answers, visible: answers().length > 0">
             <div class="answer row" data-bind="visible: filter($data), css: { 'alert-success': (is_checked && is_success), 'alert-danger': (is_checked && !is_success) }, event: { scroll: $root.scrolled }">
-                <div class="team_name   col-xs-1" data-bind="text: id"></div>
                 <div class="team_name   col-xs-2" data-bind="text: team"></div>
                 <div class="quest_id    col-xs-1" data-bind="text: (category + ':' + score)"></div>
                 <div class="quest_name  col-xs-2" data-bind="text: quest"></div>
