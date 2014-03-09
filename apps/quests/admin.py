@@ -41,9 +41,9 @@ class QuestAnswerAdmin(admin.ModelAdmin):
               'result',
               ('created_at', 'updated_at')
     )
-    list_display = ('quest_name', 'team', 'is_checked', 'is_success', 'answer')
-    list_filter = ('quest_variant__quest', 'quest_variant__team', 'is_checked', 'is_success')
-    list_editable = ('is_checked', 'is_success')
+    list_display = ('quest_name', 'team', 'is_checked', 'is_success', 'answer', 'score')
+    list_filter = ('is_checked', 'is_success', 'quest_variant__quest', 'quest_variant__team')
+    list_editable = ('is_checked', 'is_success', 'score')
     list_select_related = ('quest_variant',)
     search_fields = ('answer', 'quest_variant__quest__shortname')
     readonly_fields = ('created_at', 'updated_at')
