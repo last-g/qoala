@@ -49,7 +49,7 @@
             this.filter = function(element) {
                 return _.some(self.search_fields(), function(field) {
                     // console.log('Check' + element + ' vs ' + field)
-                    return _.some(self.search_patterns(), function(pattern) {
+                    return _.every(self.search_patterns(), function(pattern) {
                        return _.contains(element[field], pattern)
                     })
                 })
