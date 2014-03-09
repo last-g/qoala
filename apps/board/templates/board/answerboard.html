@@ -47,10 +47,10 @@
             this.category = data.quest_variant__quest__category__name
 
             this.filter = function(element) {
-                return _.some(self.search_fields(), function(field) {
+                return _.every(self.search_patterns(), function(pattern) {
+                    return _.some(self.search_fields(), function(field) {
                     // console.log('Check' + element + ' vs ' + field)
-                    return _.every(self.search_patterns(), function(pattern) {
-                       return _.contains(element[field], pattern)
+                       return _.contains(element[field] + '', pattern)
                     })
                 })
             }
