@@ -9,8 +9,17 @@ from datetime import datetime
 __author__ = 'Last G'
 
 board_sql = """
-
-select quest.*, category.name as category_name , sum(opens.team_id) as is_open ,sum(answer.id) as is_solved
+select quest.*, category.name as category_name ,
+      sum(opens.team_id) as is_open , sum(answer.id) as is_solved,
+      (
+        select count(*) from quests_quest q2
+        join quests_questvariant v2  on v2.quest_id = q2.id
+        join quests_questanswer  a2 on a2.quest_variant_id = v2.id
+        where
+          a2.is_success and a2.is_checked
+           and
+          q2.id = quest.id
+      ) as solutions_count
 from quests_quest quest
  join quests_category category on quest.category_id = category.id
  left join quests_quest_open_for opens on opens.quest_id = quest.id and opens.team_id = %s
