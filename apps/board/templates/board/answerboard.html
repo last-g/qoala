@@ -2,7 +2,8 @@
 
 {% block scripts %}
     {{ block.super }}
-    <script type='text/javascript' src="http://cdnjs.cloudflare.com/ajax/libs/knockout/3.1.0/knockout-min.js"></script>
+    <script type='text/javascript' src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.1.0/knockout-min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
 <!--
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 
@@ -44,17 +45,35 @@
             this.id = data.id
             this.score = data.quest_variant__quest__score
             this.category = data.quest_variant__quest__category__name
+
+            this.filter = function(element) {
+                return _.some(self.search_fields(), function(field) {
+                    // console.log('Check' + element + ' vs ' + field)
+                    return _.some(self.search_patterns(), function(pattern) {
+                       return _.contains(element[field], pattern)
+                    })
+                })
+            }
         }
         var ViewModel = function(initial) {
             self = this
+            this.search_string = ko.observable('')
+            this.search_patterns = ko.computed(function() {
+                return self.search_string().trim().split(/\s+/);
+            })
             this.answers = ko.observableArray(map_tasks(initial))
             this.last_answer = ko.computed(function(){
                 if(self.answers()) {
                     return self.answers()[0]
                 }
             })
+
+            this.search_fields = ko.observableArray([
+                    'team', 'quest', 'answer', 'score', 'category'
+            ])
+
             this.append_data = function append_data(data) {
-                console.log("Got data batch: " + data.length)
+                // console.log("Got data batch: " + data.length)
                 map_tasks(data).reverse().forEach(function(element){
                     self.answers.unshift(element)
                 })
@@ -70,8 +89,11 @@
     </script>
 
     <div class="answer-list">
+        <ul class="row">
+            <input type="search" class="form-control" data-bind="value: searh_string" placeholder="Search here">
+        </ul>
         <ul data-bind="foreach: answers, visible: answers().length > 0">
-            <div class="answer row" data-bind="css: { 'alert-success': (is_checked && is_success), 'alert-danger': (is_checked && !is_success) }">
+            <div class="answer row" data-bind="visible: filter($data), css: { 'alert-success': (is_checked && is_success), 'alert-danger': (is_checked && !is_success) }">
                 <div class="team_name   col-xs-2" data-bind="text: team"></div>
                 <div class="quest_id    col-xs-1" data-bind="text: (category + ':' + score)"></div>
                 <div class="quest_name  col-xs-2" data-bind="text: quest"></div>
