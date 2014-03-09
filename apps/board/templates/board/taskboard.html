@@ -35,7 +35,7 @@
                 {% if user.is_authenticated %}
                   <p><a class="btn btn-success" disabled="disabled" title="Task is already solved"><span class="glyphicon glyphicon-ok"></span> {{ task.score }}. {{ task.name }}</a></p>
                 {% else %}
-                  <p><a class="btn btn-default btn-border-success" disabled="disabled"> {{ task.score }}. {{ task.name }}</a></p>
+                  <p><a class="btn btn-default btn-border-success" disabled="disabled"> {{ task.score }}. {{ task.name }} <span style="font-size: 80% !important" class="label label-info" title="{{ task.is_open }} solved this task">{{ task.solutions_count }}</span></a></p>
                 {% endif %}
               {% elif task.is_open %}
                 <p><a class="btn btn-primary" href="{{ task.get_absolute_url }}" role="button">{{ task.score }}. {{ task.name }} <span style="font-size: 80% !important" class="label label-info" title="{{ task.is_open }} solved this task">{{ task.solutions_count }}</span></a></p>
