@@ -140,6 +140,10 @@ class Quest(qtils.CreateAndUpdateDateMixin, qtils.ModelDiffMixin, models.Model):
 
         return reverse('quests.views.open_task_by_id', args=[str(self.id)])
 
+    def solved_by(self):
+        return Team.objects.filter(questvariant__quest=self, questvariant__questanswer__is_success=True,
+                                   questvariant__questanswer__is_checked=True).order_by('-questvariant__questanswer__created_at')
+
     def is_solved_by(self, team):
         return self.questvariant_set.filter(questanswer__is_success=True, questanswer__is_checked=True,
                                             team_id=team.id).exists()
