@@ -28,8 +28,8 @@ def category_number():
 
 @python_2_unicode_compatible
 class Category(qtils.CreateAndUpdateDateMixin, models.Model):
-    name = models.CharField(max_length=60)
-    number = models.IntegerField(default=category_number)
+    name = models.CharField(max_length=60, db_index=True)
+    number = models.IntegerField(default=category_number, db_index=True)
 
     def __str__(self):
         return self.name
@@ -45,12 +45,12 @@ class Quest(qtils.CreateAndUpdateDateMixin, qtils.ModelDiffMixin, models.Model):
     score = models.IntegerField(blank=False, editable=False, db_index=True)
 
     provider_type = models.CharField(max_length=60, blank=True)
-    provider_file = models.FilePathField(path=settings.TASKS_DIR, recursive=True, allow_folders=False, allow_files=True)
+    provider_file = models.FilePathField(path=settings.TASKS_DIR, recursive=True, allow_folders=False, allow_files=True, db_index=True)
     provider_state = models.BinaryField(editable=False, null=True)
     provider_hash = models.CharField(max_length=60, editable=False)
 
-    is_simple = models.BooleanField(_('Can be checked at main thread'), default=True, editable=True, blank=True)
-    is_manual = models.BooleanField(_('Should be checked manually'), default=False, editable=True, blank=True)
+    is_simple = models.BooleanField(_('Can be checked at main thread'), default=True, editable=True, blank=True, db_index=True)
+    is_manual = models.BooleanField(_('Should be checked manually'), default=False, editable=True, blank=True, db_index=True)
 
     open_for = models.ManyToManyField('teams.Team', blank=True)
 
