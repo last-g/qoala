@@ -5,8 +5,8 @@ __author__ = 'Last G'
 
 
 class CreateAndUpdateDateMixin(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True, editable=False)
-    updated_at = models.DateTimeField(auto_now=True, editable=False)
+    created_at = models.DateTimeField(auto_now_add=True, editable=False, db_index=True)
+    updated_at = models.DateTimeField(auto_now=True, editable=False, db_index=True)
 
     class Meta:
         abstract = True
