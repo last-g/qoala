@@ -54,6 +54,12 @@ class Quest(qtils.CreateAndUpdateDateMixin, qtils.ModelDiffMixin, models.Model):
 
     open_for = models.ManyToManyField('teams.Team', blank=True)
 
+    class Meta(object):
+        index_together = [
+            ['category', 'score'],
+            ['score', 'category']
+        ]
+
     @property
     def name(self):
         return self.provider.GetName()
@@ -174,6 +180,12 @@ class QuestVariant(qtils.CreateAndUpdateDateMixin, models.Model):
                                    db_index=True)  # All question variants are invalidated, when new version of Question uploaded
     state = models.BinaryField()
 
+    class Meta(object):
+        index_together = [
+            ['quest', 'team'],
+            ['quest', 'team', 'is_valid', 'timeout']
+        ]
+
     @property
     def html(self):
         qid = self.quest.category.name + ':' + str(self.quest.score)
@@ -234,6 +246,12 @@ class QuestAnswer(qtils.CreateAndUpdateDateMixin, qtils.ModelDiffMixin, models.M
 
     answer = models.TextField()
     answer_file = models.FileField(upload_to="media", editable=False)
+
+    class Meta(object):
+        index_together = [
+            ['is_success', 'is_checked'],
+            ['quest_variant', 'is_success', 'is_checked'],
+        ]
 
     @classmethod
     def count_by_time(cls, team, period=timedelta(minutes=1)):
