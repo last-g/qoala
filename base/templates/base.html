@@ -10,7 +10,7 @@
     <meta name="description" content="RuCTF,Quals,CTF,Security,Challenge">
     <meta name="author" content="Hackerdom team">
 
-    <title>RuCTF Quals 2014 &ndash; {% block title %}Main{% endblock %}</title>
+    <title>Qoala CTF Server; {% block title %}Main{% endblock %}</title>
 
     <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet">
     <link href="{% static "css/style.css" %}" rel="stylesheet">
@@ -30,7 +30,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="/">RuCTF 2014 Quals</a>
+          <a class="navbar-brand" href="/">Qoala CTF Server</a>
         </div>
           {% if user.is_authenticated %}
             <div class="navbar-collapse collapse">
@@ -107,7 +107,7 @@
       <hr>
 
       <footer>
-        <p>&copy; <a href="http://hackerdom.ru">Hackerdom</a> 2014</p>
+        <p>&copy; <a href="http://hackerdom.ru">Hackerdom</a> 2009-{% now "Y" %} </p>
       </footer>
     </div>
 
