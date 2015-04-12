@@ -1,21 +1,29 @@
 {% extends "base.html" %}
 
+{% block page_header %} TASKS {% endblock %}
+
 {% block content %}
-    {% for category_name, tasks in by_categories %}
-        <div class="category">
-            <span>{{ category_name }}</span>
-            {% for task in tasks %}
-                <div class="task">
-                    {% if task.is_solved %}
-                        <span class="solved">{{ task.score }}</span>
-                    {% elif task.is_open %}
-                        <a class="open" href="{{ task.get_absolute_url }}">{{ task.score }}</a>
-                    {% else %}
-                        <span class="closed">{{ task.score }}</span>
-                    {% endif %}
-                    <small> {{ task.solutions_count }} </small>
-                </div>
-            {% endfor %}
+    <div class="tasks row">
+      {% for category_name, tasks in by_categories %}
+        <div class="col-xs-3 col-sm-3 col-md-2" style="height: 250px">
+          <h2>{{ category_name }}</h2>
+          {% for task in tasks %}
+            <div class="task">
+              {% if task.is_solved %}
+                {% if user.is_authenticated %}
+                  <p><a class="btn btn-success" disabled="disabled" title="Task is already solved"><span class="glyphicon glyphicon-ok"></span> {{ task.score }}. {{ task.name }} <span style="font-size: 80% !important" class="label label-success" title="{{ task.solutions_count }} solved this task">{{ task.solutions_count }}</span></a></p>
+                {% else %}
+                  <p><a class="btn btn-default btn-border-success" disabled="disabled"> {{ task.score }}. {{ task.name }} <span style="font-size: 80% !important" class="label" title="{{ task.solutions_count }} solved this task">{{ task.solutions_count }}</span></a></p>
+                {% endif %}
+              {% elif task.is_open %}
+                <p><a class="btn btn-primary" href="{{ task.get_absolute_url }}" role="button">{{ task.score }}. {{ task.name }} <span style="font-size: 80% !important" class="label label-info" title="{{ task.solutions_count }} solved this task">{{ task.solutions_count }}</span></a></p>
+              {% else %}
+                <p><a class="btn btn-default" disabled="disabled" title="Task is closed">{{ task.score }}. {{ task.name }}</a></p>
+              {% endif %}
+            </div>
+          {% endfor %}
         </div>
-    {% endfor %}
+      {% endfor %}
+    </div>
+
 {% endblock %}
