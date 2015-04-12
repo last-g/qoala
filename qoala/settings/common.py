@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """
 Django settings for qoala project.
 
@@ -7,6 +9,9 @@ https://docs.djangoproject.com/en/1.6/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.6/ref/settings/
 """
+
+from __future__ import print_function, unicode_literals, absolute_import
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
@@ -67,9 +72,6 @@ INSTALLED_APPS = (
 
     # Third-party apps, patches, fixes
     'djcelery',
-
-    # Database migrations
-    'south',
 
     # Global context
     'base',

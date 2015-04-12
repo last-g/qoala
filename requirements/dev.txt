@@ -13,6 +13,6 @@
 # nose
 # mock
 # django-nose
-# coverage
+coverage
 pep8
 pylint

@@ -2,7 +2,7 @@
 -r compiled.txt
 
 # Django stuff
-Django==1.6
+Django==1.8
 
 # Templates
 #django_compressor
@@ -28,9 +28,6 @@ zope.cachedescriptors
 
 # Admin
 django-debug-toolbar
-
-# Migrations
-South
 
 # Feature testing
 #django-waffle

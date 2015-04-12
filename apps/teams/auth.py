@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+from __future__ import print_function, unicode_literals, absolute_import
+
 from .models import Team
 
 __author__ = 'Last G'

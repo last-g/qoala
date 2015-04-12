@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+from __future__ import print_function, unicode_literals, absolute_import
+
 from django.contrib import admin
 
 from . import models
@@ -30,7 +33,7 @@ class QuestVariantAdmin(admin.ModelAdmin):
     readonly_fields = ('html', 'created_at', 'updated_at')
     list_display = ('team', 'quest')
     list_filter = ('team', 'quest')
-    list_select_related = ('quest', 'teams')
+    list_select_related = ('quest', 'team')
     search_fields = ('quest__shortname', 'team__name')
 
 

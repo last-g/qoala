@@ -1,8 +1,12 @@
+# -*- coding: utf-8 -*-
+
 """
 This is an example settings/test.py file.
 Use this settings file when running tests.
 These settings overrides what's in settings/common.py
 """
+
+from __future__ import unicode_literals, print_function, division, absolute_import
 
 from .common import *
 

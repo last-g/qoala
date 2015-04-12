@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+from __future__ import print_function, unicode_literals, absolute_import
+
 from collections import defaultdict
 from django.db.models import Sum, Count
 import itertools

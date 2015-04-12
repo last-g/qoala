@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+from __future__ import print_function, unicode_literals, absolute_import
+
 from django.db import models
 from django.conf import settings
 from django.db.models.aggregates import Max, Count
@@ -230,7 +233,7 @@ class QuestVariant(qtils.CreateAndUpdateDateMixin, models.Model):
 
     # All fields
 
-    def check(self, answer):
+    def check_answer(self, answer):
         return self.quest.provider.OnUserAction(self.descriptor, answer)
 
 
@@ -258,8 +261,8 @@ class QuestAnswer(qtils.CreateAndUpdateDateMixin, qtils.ModelDiffMixin, models.M
         return cls.objects.filter(quest_variant__team__id=team.id, created_at__gte=timezone.now() - period).aggregate(
             count=Count('id'))['count']
 
-    def check(self):
-        status, message = self.quest_variant.check(self.answer)
+    def check_answer(self):
+        status, message = self.quest_variant.check_answer(self.answer)
         self.is_checked = True
         self.is_success = status
         self.result = message

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PROJECT=/qoala/
+PROJECT=/opt/qoala/
 # Installing deps
 source ${PROJECT}/deploy/common.sh
 ${CURRENT}/install_dependencies.sh
@@ -9,7 +9,7 @@ ${CURRENT}/install_dependencies.sh
 ln -s ${PROJECT}/etc/supervisor/qoala.conf /etc/supervisor/conf.d/
 
 # Migrating data
-${PROJECT}/manage.py syncdb --migrate
+${PROJECT}/manage.py migrate
 
 # Setting up user
 ${PROJECT}/manage.py loaddata develop_superuser.json
