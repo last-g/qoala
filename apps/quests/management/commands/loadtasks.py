@@ -6,6 +6,8 @@ from os.path import basename
 
 __author__ = 'Last G'
 
+import logging
+log = logging.getLogger(__name__)
 
 class Command(BaseCommand):
     can_import_settings = True
@@ -41,4 +43,7 @@ class Command(BaseCommand):
                 if res:
                     shortname, checker, provider = res
                     print("Loading task {} from {}".format(shortname, checker))
-                    self.load_task(shortname, checker, provider)
+                    try:
+                        self.load_task(shortname, checker, provider)
+                    except Exception:
+                        log.exception("Could not load task %s from %s. Trying to continue", shortname, checker)
