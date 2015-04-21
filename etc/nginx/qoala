@@ -15,11 +15,11 @@ server {
 
     # Django media
     location /media  {
-        alias /path/to/your/mysite/media;  # your Django project's media files - amend as required
+        alias /opt/qoala/data/media/;  # your Django project's media files - amend as required
     }
 
     location /static {
-        alias /opt/qoala/static/; # your Django project's static files - amend as required
+        alias /opt/qoala/data/static/; # your Django project's static files - amend as required
     }
 
     # Finally, send all non-media requests to the Django server.
