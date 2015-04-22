@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+from __future__ import print_function, unicode_literals, absolute_import
+
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from quests.models import Quest
