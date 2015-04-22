@@ -20,13 +20,13 @@ class Command(BaseCommand):
             print("Removing old static files at {}".format(dst))
             shutil.rmtree(dst)
 
-        print("Coping files from {} to {}".format(src, dst))
+        self.stdout.write("Coping files from {} to {}".format(src, dst))
         shutil.copytree(src, dst)
 
 
     def handle(self, *args, **options):
         for task in Quest.objects.all():
-            print("Collectiong static files for {}".format(task.shortname))
+            self.stdout.write("Collectiong static files for {}".format(task.shortname))
             staticdir = join(dirname(task.provider_file), 'static')
             if exists(staticdir) and isdir(staticdir):
                 prefix = task.get_hashkey
@@ -37,9 +37,9 @@ class Command(BaseCommand):
                     try:
                         self.copy_to(staticdir, dst)
                     except Exception:
-                        print('Could not copy from {} to {}'.format(staticdir, d))
+                        self.stderr.write('Could not copy from {} to {}'.format(staticdir, d))
 
             else:
-                print("Have  no static files")
+                self.stdout.write("Have  no static files")
 
 

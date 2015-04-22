@@ -41,11 +41,11 @@ class Command(BaseCommand):
         for taskdir in os.listdir(settings.TASKS_DIR):
             path = os.path.join(settings.TASKS_DIR, taskdir)
             if os.path.isdir(path):
-                print("Checking {} for task".format(path))
+                self.stdout.write("Checking {} for task".format(path))
                 res = self.find_task(path)
                 if res:
                     shortname, checker, provider = res
-                    print("Loading task {} from {}".format(shortname, checker))
+                    self.stdout.write("Loading task {} from {}".format(shortname, checker))
                     try:
                         self.load_task(shortname, checker, provider)
                     except Exception:

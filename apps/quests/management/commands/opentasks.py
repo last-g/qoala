@@ -49,7 +49,7 @@ class Command(BaseCommand):
         quests = quests.filter(**filters).distinct()
         num = 0
         for num, q in enumerate(quests):
-            print("Opening quest: {}".format(q.shortname))
+            self.stdout.write("Opening quest: {}".format(q.shortname))
             q.open_for.add(*teams)
             q.save()
-        print("Total updated: {}".format(num))
+        self.stdout.write("Total updated: {}".format(num))
