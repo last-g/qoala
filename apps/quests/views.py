@@ -108,7 +108,7 @@ def reload_task_data(request):
     from django.utils.six import StringIO
 
     commands = [
-        # 'update_tasks_git',
+        'update_tasks_git',
         'loadtasks',
         'collectqueststatic'
     ]
