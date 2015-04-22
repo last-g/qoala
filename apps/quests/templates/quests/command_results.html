@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <div class="container">
+        {% for command in commands %}
+            <div class="command-result row">
+                <div class="command-name col-xs-12">
+                    <h1>{{ command.command  }}</h1>
+                </div>
+                <div class="command-stdout col-xs-6">
+                    <pre>{{ command.stdout }}</pre>
+                </div>
+                <div class="command-stderr col-xs-6">
+                    <pre>{{ command.stderr }}</pre>
+                </div>
+            </div>
+        {%  endfor %}
+    </div>
+{% endblock %}

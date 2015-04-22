@@ -29,6 +29,11 @@ class Command(BaseCommand):
         task_dir = settings.TASKS_DIR
         try:
             with pushd(task_dir):
-                subprocess.check_call(['git', 'pull'], stdout=self.stdout, stderr=self.stderr)
+                sp = subprocess.Popen(['git', 'pull'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                stdout, stderr = sp.communicate()
+                self.stdout.write(stdout)
+                self.stderr.write(stderr)
+                if sp.returncode != 0:
+                    raise CommandError("Exit code is not 0")
         except Exception as e:
             raise CommandError(str(e))

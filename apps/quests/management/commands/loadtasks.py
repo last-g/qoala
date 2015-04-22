@@ -48,5 +48,6 @@ class Command(BaseCommand):
                     self.stdout.write("Loading task {} from {}".format(shortname, checker))
                     try:
                         self.load_task(shortname, checker, provider)
-                    except Exception:
+                    except Exception as e:
+                        self.stderr.write("Could not load task {} from {}. Exception: {}. Trying to continue".format(shortname, checker, e))
                         log.exception("Could not load task %s from %s. Trying to continue", shortname, checker)

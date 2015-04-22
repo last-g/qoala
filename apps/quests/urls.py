@@ -16,4 +16,7 @@ urlpatterns = patterns('',
                        url(r'^open/(?P<task_id>\d+)/static/(?P<path>.*)$', views.get_task_static_by_id),
                        # url(r'^open/(?P<task_name>[A-Za-z0-9_-]+)/static/(?P<path>.*)$', views.get_task_static_by_name),
 
+                        # Administrative
+                       url(r'^reload/$', views.reload_task_data),
+
 )

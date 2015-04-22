@@ -3,7 +3,9 @@ from __future__ import print_function, unicode_literals, absolute_import
 
 from datetime import timedelta
 import django
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.core.management import call_command
+from django.core.management.base import CommandError
 from django.http.response import HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template import response
@@ -14,6 +16,8 @@ from . import forms
 import django.conf
 
 # Create your views here.
+from django.views.decorators.http import require_POST
+
 
 def open_task(req, task):
     if not task.is_open_for(req.user):
@@ -41,7 +45,8 @@ def answer_task(request, task):
 
     if models.QuestAnswer.count_by_time(request.user, period=timedelta(minutes=1)) > settings.ANSWERS_PER_MINUTE:
         return HttpResponseForbidden(
-            _("You can make only {} answers per minute. Wait a little bit and do not bruteforce".format(settings.ANSWERS_PER_MINUTE)))
+            _("You can make only {} answers per minute. Wait a little bit and do not bruteforce".format(
+                settings.ANSWERS_PER_MINUTE)))
 
     if request.method == 'POST':
         form = forms.AnswerForm(request.POST)
@@ -90,3 +95,41 @@ def get_task_static_by_name(request, task_name, path):
 def check_answer(request, answer_id):
     answer = get_object_or_404(models.QuestAnswer, pk=answer_id, quest_variant__team=request.user)
     return render(request, 'quests/show_answer.html', {'answer': answer})
+
+
+def check_is_superuser(user):
+    return user.is_superuser
+
+
+# @require_POST
+@user_passes_test(check_is_superuser)
+@login_required
+def reload_task_data(request):
+    from django.utils.six import StringIO
+
+    commands = [
+        # 'update_tasks_git',
+        'loadtasks',
+        'collectqueststatic'
+    ]
+
+    results = []
+
+    for command in commands:
+        try:
+            stdout = StringIO()
+            stderr = StringIO()
+            call_command(command, stdout=stdout, stderr=stderr)
+        except CommandError as e:
+            stderr.write('\n\nCommand failed cause {}'.format(e))
+
+        results.append({
+            'command': command,
+            'stdout': stdout.getvalue(),
+            'stderr': stderr.getvalue()
+        })
+
+    return render(request, 'quests/command_results.html', {
+        'title': 'Update tasks',
+        'commands': results,
+    })
