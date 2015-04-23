@@ -9,6 +9,23 @@
     <div class="well">
         {{ variant.html | safe }}
     </div>
+
+    {% if variant.last_answer %}
+      <div class="last-answer panel panel-default">
+        <div class="panel-heading" role="tab">
+          <h4 class="panel-title">
+            <a class="" data-toggle="collapse" href="#collapseListGroup1" aria-expanded="true" aria-controls="collapseListGroup1">
+                  Last given answer
+            </a>
+          </h4>
+        </div>
+          <div id="collapseListGroup1" class="panel-body panel-collapse collapse" role="tabpanel">
+            <pre>{{ variant.last_answer.answer }}</pre>
+          </div>
+      </div>
+    {% endif %}
+
+
     <div>
       <form class="form-inline" role="form" action="{% url 'quests.views.answer_task_by_id' variant.quest.id %}" method="post">
        {% csrf_token %}
