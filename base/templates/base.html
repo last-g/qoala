@@ -77,19 +77,6 @@
     <div class="container">
 
       <div class="page-header">
-          <div class="btn-group btn-group-sm i18n">
-            {% if LANGUAGE_CODE == "ru" %}
-              <a href="{% url 'set_lang' 'ru' %}" role="button" class="btn btn-info" disabled="disabled">RU</a>
-            {% else %}
-              <a href="{% url 'set_lang' 'ru' %}" role="button" class="btn btn-default">RU</a>
-            {% endif %}
-            {% if LANGUAGE_CODE == "en" %}
-              <a href="{% url 'set_lang' 'en' %}" role="button" class="btn btn-info" disabled="disabled">EN</a>
-            {% else %}
-              <a href="{% url 'set_lang' 'en' %}" role="button" class="btn btn-default">EN</a>
-            {% endif %}
-          </div>
-
         <h1>{% block page_header %}{% endblock %}</h1>
       </div>
 
