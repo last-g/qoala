@@ -13,9 +13,13 @@ import sys
 
 from .boards import *
 
+def check_is_superuser(user):
+    return user.is_superuser
+
 # Create your views here.
 
-
+@user_passes_test(check_is_superuser)
+@login_required
 def task_board(request):
     tasks_by_category = get_task_board(request.user)
     return render(request, 'board/taskboard.html', {'by_categories': tasks_by_category})
@@ -27,8 +31,6 @@ def score_board(request):
     return render(request, 'board/scoreboard.html', {'teams': scores})
 
 
-def check_is_superuser(user):
-    return user.is_superuser
 
 def default_request():
     return QuestAnswer.objects.order_by('-created_at', '-id').values(

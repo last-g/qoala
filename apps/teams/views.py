@@ -2,6 +2,8 @@
 from __future__ import print_function, unicode_literals, absolute_import
 
 from django.conf import settings
+from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import authenticate, login, logout
 from .forms import TokenAuthForm
@@ -11,6 +13,12 @@ from .models import Team
 from quests.models import Quest
 
 
+def check_is_superuser(user):
+    return user.is_superuser
+
+
+@user_passes_test(check_is_superuser)
+@login_required
 def show(req, name):
     team = get_object_or_404(Team, name=name)
     solved_tasks = Quest.objects.filter(questvariant__team_id=team.id, questvariant__questanswer__is_checked=True,
@@ -47,7 +55,7 @@ def set_lang(request, lang_code):
     from django.utils import translation
 
     translation.activate(lang_code)
-    #   request.session[translation.LANGUAGE_SESSION_KEY] = lang_code
+    # request.session[translation.LANGUAGE_SESSION_KEY] = lang_code
     response = redirect(request.META['HTTP_REFERER'])
     response.set_cookie(settings.LANGUAGE_COOKIE_NAME, lang_code)
     return response
