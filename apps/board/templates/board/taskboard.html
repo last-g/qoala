@@ -20,14 +20,12 @@
                   {% elif task.is_open %}
                     <a class="btn btn-primary" href="{{ task.get_absolute_url }}" role="button">
                   {% endif %}
-                    {{ task.score }}. {{ task.name }}
-                    {% if user.is_superuser %}
+                    {{ task.name }}
                       <span style="font-size: 80% !important" class="label label-info" title="{{ task.solutions_count }} solved this task">{{ task.solutions_count }}</span>
-                    {% endif %}
                   </a>
                 </p>
               {% else %}
-                <p><a class="btn btn-default" disabled="disabled" title="Task is closed">{{ task.score }}. {{ task.name }}</a></p>
+                <p><a class="btn btn-default" disabled="disabled" title="Task is closed">{{ task.name }}</a></p>
               {% endif %}
             </div>
           {% endfor %}
