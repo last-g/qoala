@@ -5,16 +5,6 @@
 {% block page_header %}<a href="{% url "board.views.task_board" %}">&larr;</a> {{ variant.quest.name }}{% endblock %}
 
 {% block content %}
-    {% if variant.quest.solved_by %}
-	<div id="solved-by">
-        	<div class="bs-callout bs-callout-info">Already solved by:
-	
-        	{% for team in variant.quest.solved_by %}
-	                <a href="{% url 'teams.views.show' team.name %}">{{ team.name }}</a>{% if not forloop.last %},{% endif %}			
-	        {%  endfor %}		
-	        </div>
-	</div>
-    {% endif %}
 
     <div class="well">
         {{ variant.html | safe }}
