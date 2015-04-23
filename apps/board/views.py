@@ -18,14 +18,14 @@ def check_is_superuser(user):
 
 # Create your views here.
 
-@user_passes_test(check_is_superuser)
-@login_required
 def task_board(request):
     tasks_by_category = get_task_board(request.user)
     return render(request, 'board/taskboard.html', {'by_categories': tasks_by_category})
 
 
 #@condition(last_modified_func=scoreboard_modified)
+@user_passes_test(check_is_superuser)
+@login_required
 def score_board(request):
     scores = get_scoreboard()
     return render(request, 'board/scoreboard.html', {'teams': scores})

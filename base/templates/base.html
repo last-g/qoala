@@ -36,8 +36,11 @@
             <div class="navbar-collapse collapse">
               <ul class="nav navbar-nav navbar-right">
                 <li><a href="{% url "board.views.task_board" %}">Tasks</a></li>
-                <li><a href="{% url "board.views.score_board" %}">Scoreboard</a></li>
-                <li><a href="{{ user.get_absolute_url }}">Profile [{{ user.name }}]</a></li>
+                {% if user.is_superuser %}
+                    <li><a href="{% url "board.views.score_board" %}">Scoreboard</a></li>
+                    <li><a href="{% url "admin:index" %}">Admin</a></li>
+                    <li><a href="{{ user.get_absolute_url }}">Profile [{{ user.name }}]</a></li>
+                {% endif %}
                 <li><a href="{% url 'logout' %}">Logout</a></li>
               </ul>
             </div>
@@ -45,8 +48,7 @@
             <div class="navbar-collapse collapse">
               <ul class="nav navbar-nav navbar-right">
                 <li><a href="{% url "board.views.task_board" %}">Tasks</a></li>
-                <li><a href="{% url "board.views.score_board" %}">Scoreboard</a></li>
-              </ul>              
+              </ul>
               <form class="navbar-form navbar-right" role="form" action="{% url 'login' %}" method="POST">
                 {% csrf_token %}
                 {% block login-form-group %}

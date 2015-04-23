@@ -11,7 +11,7 @@ urlpatterns = patterns('',
     # url(r'^$', 'qoala.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
 
-    url(r'^$', 'board.views.score_board', name="home"),
+    url(r'^$', 'board.views.task_board', name="home"),
     url(r'^board/', include('board.urls')),
     url(r'^tasks/', include('quests.urls')),
     url(r'^teams/', include('teams.urls')),
