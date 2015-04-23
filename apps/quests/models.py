@@ -231,6 +231,10 @@ class QuestVariant(qtils.CreateAndUpdateDateMixin, models.Model):
         else:
             return self._get_content('en')
 
+    @property
+    def last_answer(self):
+        return self.questanswer_set.order_by('-created_at').first()
+
     # All fields
 
     def check_answer(self, answer):
