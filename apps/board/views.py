@@ -63,7 +63,7 @@ def get_last_answers(request):
 #    response = json_serializer.serialize(answers, ensure_ascii=False, indent=2, use_natural_keys=True)
     response = json.dumps(list(answers), cls=DjangoJSONEncoder)
 #    response = json_serializer.serialize(list(answers))
-    return HttpResponse(response, mimetype="application/json")
+    return HttpResponse(response, content_type="application/json")
 
 @csrf_exempt
 @user_passes_test(check_is_superuser)
