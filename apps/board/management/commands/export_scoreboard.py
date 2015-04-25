@@ -4,6 +4,7 @@ from django.core.management import BaseCommand
 
 import csv
 import sys
+from pytz import timezone
 
 from board.boards import  get_scoreboard
 from quests.models import Quest
@@ -19,7 +20,8 @@ class Command(BaseCommand):
     can_import_settings = True
 
     def handle(self, *args, **options):
-        fields = ['team'] + [q.name.encode('utf8') for q in Quest.objects.all()] + ['score']
+
+        fields = ['team', 'token'] + [q.name.encode('utf8') for q in Quest.objects.all()] + ['score']
 
         quests = list(Quest.objects.all())
 
@@ -28,12 +30,13 @@ class Command(BaseCommand):
         for team in get_scoreboard():
             row = {
                 'team': team.name,
+                'token': team.token,
                 'score': team.score
             }
             for q in quests:
                 if q.is_solved_by(team):
                     last_answer = q.get_variant(team).last_answer
-                    row[q.name.encode('utf8')] = last_answer.created_at
+                    row[q.name.encode('utf8')] = last_answer.created_at.astimezone(timezone('Asia/Yekaterinburg')).time().replace(microsecond=0)
                     if not last_answer.is_checked or not last_answer.is_success:
                         raise Exception("Last answer isn't success")
                 else:
