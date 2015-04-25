@@ -76,7 +76,7 @@ def get_more_answers(request):
 
     answers = default_request().filter(id__lt=last_id)[0:count]
     response = json.dumps(list(answers), cls=DjangoJSONEncoder)
-    return HttpResponse(response, mimetype="application/json")
+    return HttpResponse(response, content_type="application/json")
 
 
 @user_passes_test(check_is_superuser)
